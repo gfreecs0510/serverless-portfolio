@@ -12,10 +12,8 @@ const lambdaHandler = async (
   event: APIGatewayProxyEventV2,
 ): Promise<APIGatewayProxyResultV2<Response>> => {
   try {
-    console.log('i am here in the register');
     const user: UserRequest = JSON.parse(event.body as string);
     const result = await register(user);
-    console.log('result of register');
     return generateResponse(result);
   } catch (error) {
     console.error('Error:', error as Error);

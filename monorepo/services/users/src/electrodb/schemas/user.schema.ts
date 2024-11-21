@@ -14,11 +14,11 @@ const User = createSchema({
   indexes: {
     user: {
       pk: {
-        field: 'pk',
+        field: 'PK',
         composite: ['username'],
       },
       sk: {
-        field: 'sk',
+        field: 'SK',
         composite: ['type'],
       },
     },

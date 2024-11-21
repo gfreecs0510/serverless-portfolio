@@ -45,7 +45,9 @@ export async function login(userInput: UserRequest): Promise<Response> {
       statusCode: 200,
       body: {
         token,
-        user,
+        user: {
+          username,
+        },
         message: 'success',
       },
     };
@@ -63,7 +65,6 @@ export async function login(userInput: UserRequest): Promise<Response> {
 export async function register(userInput: UserRequest): Promise<Response> {
   try {
     const { username, password } = userInput;
-    console.log('register controller', userInput);
 
     let result = await userService.entities.user
       .get({
@@ -77,7 +78,7 @@ export async function register(userInput: UserRequest): Promise<Response> {
     if (result.data !== null) {
       return {
         statusCode: 400,
-        body: { message: 'username does not exists' },
+        body: { message: 'username already exists' },
       };
     }
     console.log('salt and hash');
