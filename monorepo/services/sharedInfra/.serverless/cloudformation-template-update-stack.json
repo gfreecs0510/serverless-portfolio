@@ -1,0 +1,203 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "The AWS CloudFormation template for this Serverless application",
+  "Resources": {
+    "ServerlessVPC": {
+      "Type": "AWS::EC2::VPC",
+      "Properties": {
+        "CidrBlock": "10.0.0.0/16",
+        "EnableDnsSupport": "true",
+        "EnableDnsHostnames": "true",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "ServerlessVPC"
+          }
+        ]
+      }
+    },
+    "PrivateSubnet1": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "AvailabilityZone": "us-east-1a",
+        "CidrBlock": "10.0.2.0/24",
+        "VpcId": {
+          "Ref": "ServerlessVPC"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "PrivateSubnet1"
+          }
+        ]
+      }
+    },
+    "LambdaSecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Allow Lambda access to ElastiCache",
+        "VpcId": {
+          "Ref": "ServerlessVPC"
+        },
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "6379",
+            "ToPort": "6379",
+            "CidrIp": "10.0.0.0/16"
+          }
+        ]
+      }
+    },
+    "SharedCacheSubnetGroup": {
+      "Type": "AWS::ElastiCache::SubnetGroup",
+      "Properties": {
+        "Description": "Subnet group for ElastiCache",
+        "SubnetIds": [
+          {
+            "Ref": "PrivateSubnet1"
+          }
+        ]
+      }
+    },
+    "SharedElasticCacheCluster": {
+      "Type": "AWS::ElastiCache::CacheCluster",
+      "Properties": {
+        "ClusterName": "shared-redis-cluster",
+        "Engine": "redis",
+        "CacheNodeType": "cache.t3.micro",
+        "NumCacheNodes": 1,
+        "VpcSecurityGroupIds": [
+          {
+            "Ref": "LambdaSecurityGroup"
+          }
+        ],
+        "AutoMinorVersionUpgrade": true,
+        "CacheSubnetGroupName": {
+          "Ref": "SharedCacheSubnetGroup"
+        }
+      }
+    },
+    "SharedDynamoDB": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "TableName": "Serverless",
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "id",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "id",
+            "KeyType": "HASH"
+          }
+        ],
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 1,
+          "WriteCapacityUnits": 1
+        }
+      }
+    },
+    "SharedApiGateway": {
+      "Type": "AWS::ApiGatewayV2::Api",
+      "Properties": {
+        "Name": "SharedApiGateway",
+        "ProtocolType": "HTTP",
+        "CorsConfiguration": {
+          "AllowMethods": [
+            "*"
+          ],
+          "AllowHeaders": [
+            "*"
+          ],
+          "AllowOrigins": [
+            "*"
+          ]
+        }
+      }
+    },
+    "ApiGatewayStage": {
+      "Type": "AWS::ApiGatewayV2::Stage",
+      "Properties": {
+        "ApiId": {
+          "Ref": "SharedApiGateway"
+        },
+        "StageName": "dev",
+        "AutoDeploy": true,
+        "DefaultRouteSettings": {
+          "ThrottlingRateLimit": 20,
+          "ThrottlingBurstLimit": 30
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "ServerlessDeploymentBucketName": {
+      "Value": "serverless-framework-deployments-us-east-1-a0eef045-f091",
+      "Export": {
+        "Name": "sls-sharedInfra-dev-ServerlessDeploymentBucketName"
+      }
+    },
+    "SharedApiGatewayId": {
+      "Description": "API Gateway Id",
+      "Value": {
+        "Ref": "SharedApiGateway"
+      }
+    },
+    "SharedDynamoDBArn": {
+      "Description": "DynamoDB arn",
+      "Value": {
+        "Fn::GetAtt": [
+          "SharedDynamoDB",
+          "Arn"
+        ]
+      }
+    },
+    "SharedDynamoDBTableName": {
+      "Description": "The DynamoDB table name",
+      "Value": {
+        "Ref": "SharedDynamoDB"
+      }
+    },
+    "SharedElasticCacheClusterAddress": {
+      "Description": "Redis cluster address",
+      "Value": {
+        "Fn::GetAtt": [
+          "SharedElasticCacheCluster",
+          "RedisEndpoint.Address"
+        ]
+      }
+    },
+    "SharedElasticCacheClusterPort": {
+      "Description": "Redis cluster port",
+      "Value": {
+        "Fn::GetAtt": [
+          "SharedElasticCacheCluster",
+          "RedisEndpoint.Port"
+        ]
+      }
+    },
+    "LambdaSecurityGroupId": {
+      "Description": "Lambda Security Group",
+      "Value": {
+        "Ref": "LambdaSecurityGroup"
+      }
+    },
+    "PrivateSubnet1": {
+      "Description": "Private Subnet 1",
+      "Value": {
+        "Ref": "PrivateSubnet1"
+      }
+    },
+    "VPCId": {
+      "Value": {
+        "Ref": "ServerlessVPC"
+      },
+      "Export": {
+        "Name": "sharedInfra-VPCId"
+      }
+    }
+  }
+}

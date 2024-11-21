@@ -1,0 +1,35 @@
+{
+  "name": "monorepo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc -b",
+    "start": "node dist/index.js",
+    "format": "prettier --ignore-path .gitignore --write \"./**/*.+(js|ts|json|yml|yaml)\"",
+    "open-api-user-types": "npx openapi-typescript ./services/users/openapi.yaml -o ./services/users/types/openapi.type.ts",
+    "deploy": "SLS_DEPLOY_REGION=us-east-1 serverless deploy"
+  },
+  "keywords": [],
+  "author": "AL Lara",
+  "license": "ISC",
+  "description": "Monorepo for all backend services for my portfolio",
+  "dependencies": {
+    "@middy/core": "^5.5.1",
+    "aws-sdk": "^2.1692.0",
+    "bcryptjs": "^2.4.3",
+    "electrodb": "^3.0.1",
+    "jsonwebtoken": "^9.0.2",
+    "middy": "^0.36.0",
+    "redis": "^4.7.0",
+    "serverless-step-functions": "^3.21.1",
+    "uuid": "^11.0.3"
+  },
+  "devDependencies": {
+    "openapi-typescript": "^7.4.3",
+    "prettier": "^3.3.3",
+    "serverless": "^4.4.10",
+    "serverless-iam-roles-per-function": "^3.2.0",
+    "serverless-plugin-utils": "^0.2.0",
+    "typescript": "^5.6.3"
+  }
+}

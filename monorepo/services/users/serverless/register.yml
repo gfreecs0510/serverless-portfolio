@@ -1,0 +1,15 @@
+registerFunction:
+  handler: src/handlers/register.handler
+  timeout: 30
+  iamRoleStatementsName: registerFunctionRole
+  iamRoleStatements:
+    - Effect: Allow
+      Resource: ${param:SharedDynamoDBArn}
+      Action:
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+  events:
+    - httpApi:
+        path: /users/register
+        method: POST

@@ -1,0 +1,7 @@
+noTokenAccessFunction:
+  handler: src/handlers/noTokenAccess.handler
+  timeout: 30
+  events:
+    - httpApi:
+        path: /users/noTokenAccess
+        method: POST

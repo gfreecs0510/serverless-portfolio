@@ -1,0 +1,308 @@
+openapi: 3.0.0
+info:
+  title: User Service API
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+components:
+  schemas:
+    Token:
+      type: string
+      description: User token
+    Username:
+      type: string
+      format: email
+      description: Must be a valid email address.
+    Password:
+      type: string
+      pattern: '^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])(?=.*\S).{10,72}$'
+      description: Password must be between 10 and 72 characters, contain at least one uppercase letter, one digit, one special character, and no spaces.
+    UserRequest:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          $ref: '#/components/schemas/Username'
+        password:
+          $ref: '#/components/schemas/Password'
+    User:
+      type: object
+      properties:
+        username:
+          $ref: '#/components/schemas/Username'
+    ChangePasswordRequest:
+      type: object
+      required:
+        - username
+        - oldPassword
+        - newPassword
+      properties:
+        username:
+          $ref: '#/components/schemas/Username'
+        oldPassword:
+          $ref: '#/components/schemas/Password'
+        newPassword:
+          $ref: '#/components/schemas/Password'
+    UserResponse:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+        token:
+          $ref: '#/components/schemas/Token'
+    UnauthorizedResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: 'unauthorized'
+    RateLimitedResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: 'rate limited'
+    ServerErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: 'internal server error'
+    GenericErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: 'error'
+
+paths:
+  /users/register:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+      responses:
+        '201':
+          description: Successful registration
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Generic 400
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RateLimitedResponse'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorResponse'
+
+  /users/login:
+    post:
+      summary: Login a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+      responses:
+        '200':
+          description: User logged in successfully
+          content:
+            application/json:
+              schema:
+                properties:
+                  token:
+                    $ref: '#/components/schemas/Token'
+                  user:
+                    $ref: '#/components/schemas/User'
+                  message:
+                    type: string
+                    example: success
+        '400':
+          description: Generic 400
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RateLimitedResponse'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorResponse'
+
+  /users/changePassword:
+    patch:
+      summary: Change user's password
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          schema:
+            type: string
+          description: Bearer token for authorization.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePasswordRequest'
+      responses:
+        '200':
+          description: change password successfully
+          content:
+            application/json:
+              schema:
+                properties:
+                  token:
+                    $ref: '#/components/schemas/Token'
+                  user:
+                    $ref: '#/components/schemas/User'
+                  message:
+                    type: string
+                    example: success
+        '400':
+          description: Generic 400
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RateLimitedResponse'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorResponse'
+
+  /users/verify:
+    post:
+      summary: Verify the user's token
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          schema:
+            type: string
+          description: Bearer token for authorization.
+      responses:
+        '200':
+          description: verified token
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: verified
+                  user:
+                    $ref: '#/components/schemas/User'
+        '400':
+          description: Generic 400
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RateLimitedResponse'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorResponse'
+
+  /users/noTokenAccess:
+    post:
+      summary: Check if ip is rate limited
+      responses:
+        '200':
+          description: verified token
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: allowed
+        '400':
+          description: Generic 400
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericErrorResponse'
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RateLimitedResponse'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerErrorResponse'

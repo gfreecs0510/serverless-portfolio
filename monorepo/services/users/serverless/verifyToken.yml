@@ -1,0 +1,7 @@
+verifyTokenFunction:
+  handler: src/handlers/verifyToken.handler
+  timeout: 30
+  events:
+    - httpApi:
+        path: /users/verify
+        method: POST

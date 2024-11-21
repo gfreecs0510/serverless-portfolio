@@ -1,0 +1,153 @@
+service: sharedInfra
+
+plugins:
+  - serverless-plugin-utils
+
+custom:
+  esbuild:
+    sourcemap: true
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: ${env:AWS_REGION, 'us-west-2'}
+  versionFunctions: false
+  tracing:
+    apiGateway: true
+    lambda: true
+  environment:
+    ENV: ${env:ENV}
+    SERVICE_NAME: ${self:service}
+    NODE_OPTIONS: --enable-source-maps
+    AWS_ACCESS_KEY_ID: ${env:AWS_ACCESS_KEY_ID}
+    AWS_SECRET_ACCESS_KEY: ${env:AWS_SECRET_ACCESS_KEY}
+    AWS_DEFAULT_REGION: ${env:AWS_DEFAULT_REGION}
+    AWS_REGION: ${env:AWS_REGION}
+  vpc:
+    securityGroupIds:
+      - !Ref LambdaSecurityGroup
+    subnetIds:
+      - !Ref PrivateSubnet1
+
+resources:
+  Resources:
+    ServerlessVPC:
+      Type: AWS::EC2::VPC
+      Properties:
+        CidrBlock: '10.0.0.0/16'
+        EnableDnsSupport: 'true'
+        EnableDnsHostnames: 'true'
+        Tags:
+          - Key: Name
+            Value: ServerlessVPC
+
+    PrivateSubnet1:
+      Type: AWS::EC2::Subnet
+      Properties:
+        AvailabilityZone: ${env:AWS_AVAILABILITY_ZONE, 'us-east-1a'}
+        CidrBlock: '10.0.2.0/24'
+        VpcId: !Ref ServerlessVPC
+        Tags:
+          - Key: Name
+            Value: PrivateSubnet1
+
+    LambdaSecurityGroup:
+      Type: AWS::EC2::SecurityGroup
+      Properties:
+        GroupDescription: 'Allow Lambda access to ElastiCache'
+        VpcId: !Ref ServerlessVPC
+        SecurityGroupIngress:
+          - IpProtocol: 'tcp'
+            FromPort: ${env:REDIS_PORT, '6379'} # Using environment variable for port
+            ToPort: ${env:REDIS_PORT, '6379'} # Using environment variable for port
+            CidrIp: '10.0.0.0/16'
+
+    SharedCacheSubnetGroup:
+      Type: AWS::ElastiCache::SubnetGroup
+      Properties:
+        Description: 'Subnet group for ElastiCache'
+        SubnetIds:
+          - Ref: PrivateSubnet1
+
+    SharedElasticCacheCluster:
+      Type: AWS::ElastiCache::CacheCluster
+      Properties:
+        ClusterName: shared-redis-cluster
+        Engine: redis
+        CacheNodeType: cache.t3.micro
+        NumCacheNodes: 1
+        VpcSecurityGroupIds:
+          - Ref: LambdaSecurityGroup
+        AutoMinorVersionUpgrade: true
+        CacheSubnetGroupName: !Ref SharedCacheSubnetGroup
+
+    SharedDynamoDB:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: Serverless
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+    SharedApiGateway:
+      Type: AWS::ApiGatewayV2::Api
+      Properties:
+        Name: SharedApiGateway
+        ProtocolType: HTTP
+        CorsConfiguration:
+          AllowMethods:
+            - '*'
+          AllowHeaders:
+            - '*'
+          AllowOrigins:
+            - '*'
+
+    ApiGatewayStage:
+      Type: AWS::ApiGatewayV2::Stage
+      Properties:
+        ApiId: !Ref SharedApiGateway
+        StageName: ${sls:stage}
+        AutoDeploy: true
+        DefaultRouteSettings:
+          ThrottlingRateLimit: 20
+          ThrottlingBurstLimit: 30
+
+  Outputs:
+    SharedApiGatewayId:
+      Description: 'API Gateway Id'
+      Value: !Ref SharedApiGateway
+
+    SharedDynamoDBArn:
+      Description: 'DynamoDB arn'
+      Value: !GetAtt SharedDynamoDB.Arn
+
+    SharedDynamoDBTableName:
+      Description: 'The DynamoDB table name'
+      Value: !Ref SharedDynamoDB
+
+    SharedElasticCacheClusterAddress:
+      Description: 'Redis cluster address'
+      Value: !GetAtt SharedElasticCacheCluster.RedisEndpoint.Address
+
+    SharedElasticCacheClusterPort:
+      Description: 'Redis cluster port'
+      Value: !GetAtt SharedElasticCacheCluster.RedisEndpoint.Port
+
+    LambdaSecurityGroupId:
+      Description: 'Lambda Security Group'
+      Value: !Ref LambdaSecurityGroup
+
+    PrivateSubnet1:
+      Description: 'Private Subnet 1'
+      Value: !Ref PrivateSubnet1
+
+    VPCId:
+      Value: !Ref ServerlessVPC
+      Export:
+        Name: ${self:service}-VPCId

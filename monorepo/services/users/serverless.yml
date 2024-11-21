@@ -1,0 +1,37 @@
+service: users
+
+plugins:
+  - serverless-iam-roles-per-function
+
+custom:
+  esbuild:
+    bundle: true
+    sourcemap: true
+    minify: true
+    target: 'node18'
+  serverless-iam-roles-per-function:
+    defaultInherit: true
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: ${env:AWS_REGION, "us-east-1"}
+  httpApi:
+    id: ${param:SharedApiGatewayId}
+  vpc:
+    securityGroupIds:
+      - ${param:LambdaSecurityGroupId}
+    subnetIds:
+      - ${param:PrivateSubnet1}
+  environment:
+    ENV: ${env:ENV}
+    REDIS_HOST: ${param:SharedElasticCacheClusterAddress}
+    REDIS_PORT: ${param:SharedElasticCacheClusterPort}
+    TABLE_NAME: ${param:SharedDynamoDBTableName}
+
+functions:
+  - ${file(./serverless/changePassword.yml)}
+  - ${file(./serverless/login.yml)}
+  - ${file(./serverless/noTokenAccess.yml)}
+  - ${file(./serverless/register.yml)}
+  - ${file(./serverless/verifyToken.yml)}

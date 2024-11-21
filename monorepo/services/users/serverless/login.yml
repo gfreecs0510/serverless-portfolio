@@ -1,0 +1,13 @@
+loginFunction:
+  handler: src/handlers/login.handler
+  timeout: 30
+  iamRoleStatementsName: loginFunctionRole
+  iamRoleStatements:
+    - Effect: Allow
+      Resource: ${param:SharedDynamoDBArn}
+      Action:
+        - dynamodb:GetItem
+  events:
+    - httpApi:
+        path: /users/login
+        method: POST

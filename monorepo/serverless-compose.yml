@@ -1,0 +1,14 @@
+services:
+  sharedInfra:
+    path: services/sharedInfra
+
+  users:
+    path: services/users
+    params:
+      SharedElasticCacheClusterAddress: ${sharedInfra.SharedElasticCacheClusterAddress}
+      SharedElasticCacheClusterPort: ${sharedInfra.SharedElasticCacheClusterPort}
+      SharedDynamoDBTableName: ${sharedInfra.SharedDynamoDBTableName}
+      SharedDynamoDBArn: ${sharedInfra.SharedDynamoDBArn}
+      SharedApiGatewayId: ${sharedInfra.SharedApiGatewayId}
+      LambdaSecurityGroupId: ${sharedInfra.LambdaSecurityGroupId}
+      PrivateSubnet1: ${sharedInfra.PrivateSubnet1}
