@@ -25,7 +25,7 @@ provider:
     AWS_REGION: ${env:AWS_REGION}
   vpc:
     securityGroupIds:
-      - !Ref LambdaSecurityGroup
+      - !Ref ServerlessSecurityGroup
     subnetIds:
       - !Ref PrivateSubnet1
 
@@ -51,16 +51,30 @@ resources:
           - Key: Name
             Value: PrivateSubnet1
 
-    LambdaSecurityGroup:
+    ServerlessSecurityGroup:
       Type: AWS::EC2::SecurityGroup
       Properties:
-        GroupDescription: 'Allow Lambda access to ElastiCache'
+        GroupDescription: 'Allow Lambda access to ElastiCache and other services'
         VpcId: !Ref ServerlessVPC
         SecurityGroupIngress:
           - IpProtocol: 'tcp'
             FromPort: ${env:REDIS_PORT, '6379'} # Using environment variable for port
             ToPort: ${env:REDIS_PORT, '6379'} # Using environment variable for port
             CidrIp: '10.0.0.0/16'
+
+    ServerlessRouteTable:
+      Type: AWS::EC2::RouteTable
+      Properties:
+        VpcId: !Ref ServerlessVPC
+        Tags:
+          - Key: Name
+            Value: 'ServerlessRouteTable'
+
+    ServerlessRouteTableAssociation:
+      Type: AWS::EC2::SubnetRouteTableAssociation
+      Properties:
+        SubnetId: !Ref PrivateSubnet1
+        RouteTableId: !Ref ServerlessRouteTable
 
     SharedCacheSubnetGroup:
       Type: AWS::ElastiCache::SubnetGroup
@@ -77,23 +91,44 @@ resources:
         CacheNodeType: cache.t3.micro
         NumCacheNodes: 1
         VpcSecurityGroupIds:
-          - Ref: LambdaSecurityGroup
+          - Ref: ServerlessSecurityGroup
         AutoMinorVersionUpgrade: true
         CacheSubnetGroupName: !Ref SharedCacheSubnetGroup
 
     SharedDynamoDB:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: Serverless
+        TableName: ServerlessDB
         AttributeDefinitions:
-          - AttributeName: id
+          - AttributeName: PK
+            AttributeType: S
+          - AttributeName: SK
             AttributeType: S
         KeySchema:
-          - AttributeName: id
+          - AttributeName: PK
             KeyType: HASH
+          - AttributeName: SK
+            KeyType: RANGE
         ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+          ReadCapacityUnits: 3
+          WriteCapacityUnits: 3
+
+    DynamoDBGatewayEndpoint:
+      Type: AWS::EC2::VPCEndpoint
+      Properties:
+        VpcId: !Ref ServerlessVPC
+        ServiceName: !Sub 'com.amazonaws.${AWS::Region}.dynamodb'
+        RouteTableIds:
+          - !Ref ServerlessRouteTable
+        VpcEndpointType: Gateway
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal: '*'
+              Action:
+                - 'dynamodb:*'
+              Resource: '*'
 
     SharedApiGateway:
       Type: AWS::ApiGatewayV2::Api
@@ -139,9 +174,9 @@ resources:
       Description: 'Redis cluster port'
       Value: !GetAtt SharedElasticCacheCluster.RedisEndpoint.Port
 
-    LambdaSecurityGroupId:
+    ServerlessSecurityGroupId:
       Description: 'Lambda Security Group'
-      Value: !Ref LambdaSecurityGroup
+      Value: !Ref ServerlessSecurityGroup
 
     PrivateSubnet1:
       Description: 'Private Subnet 1'

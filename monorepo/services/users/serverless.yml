@@ -20,7 +20,7 @@ provider:
     id: ${param:SharedApiGatewayId}
   vpc:
     securityGroupIds:
-      - ${param:LambdaSecurityGroupId}
+      - ${param:ServerlessSecurityGroupId}
     subnetIds:
       - ${param:PrivateSubnet1}
   environment:

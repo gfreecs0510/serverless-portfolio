@@ -10,5 +10,5 @@ services:
       SharedDynamoDBTableName: ${sharedInfra.SharedDynamoDBTableName}
       SharedDynamoDBArn: ${sharedInfra.SharedDynamoDBArn}
       SharedApiGatewayId: ${sharedInfra.SharedApiGatewayId}
-      LambdaSecurityGroupId: ${sharedInfra.LambdaSecurityGroupId}
+      ServerlessSecurityGroupId: ${sharedInfra.ServerlessSecurityGroupId}
       PrivateSubnet1: ${sharedInfra.PrivateSubnet1}
