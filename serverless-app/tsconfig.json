@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "jsx": "react-jsx", // Enable JSX support
+    "strict": true, // Enable strict type checking options
+    "moduleResolution": "node", // Resolving modules in a Node.js style
+    "esModuleInterop": true // Allows importing non-ESM modules
+  },
+  "include": [
+    "src/**/*.tsx", // Make sure TypeScript files are included
+    "src/**/*.ts"
+  ]
+}
