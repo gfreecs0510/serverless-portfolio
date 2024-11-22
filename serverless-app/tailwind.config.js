@@ -10,6 +10,13 @@ module.exports = {
       fontFamily: {
         sans: ['InterVariable', ...defaultTheme.fontFamily.sans],
       },
+      darkMode: 'class', // Enable class-based dark mode
+      colors: {
+        body: {
+          light: '#ffffff', // Light mode body background
+          dark: '#1a202c', // Dark mode body background
+        },
+      }
     },
   },
   plugins: [

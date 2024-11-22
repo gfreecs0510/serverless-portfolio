@@ -1,44 +1,27 @@
-import React from 'react'
+import { FC } from 'react'
 
-// Export the type for reuse
 type TextFieldProps = {
-  id: string
   label: string
   placeholder: string
-  value: string
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
-  type?: string
-  autoComplete?: string
-  required?: boolean
+  minLength: number
+  maxLength: number
 }
 
-const TextField: React.FC<TextFieldProps> = ({
-  id,
-  label,
-  placeholder,
-  value,
-  onChange = () => {},
-  type = 'text',
-  autoComplete,
-  required = false
-}) => {
+const TextField: FC<TextFieldProps> = (props: TextFieldProps) => {
   return (
-    <div className="flex flex-col space-y-2">
-      <label htmlFor={label} className="text-sm font-medium text-gray-700">
-        {label}
+    <>
+      <label className="mb-[10px] block text-base font-medium text-dark dark:text-white">
+        {props.label}
       </label>
       <input
-        id={id}
-        type={type}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        autoComplete={autoComplete}
-        required
-        className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+        type="text"
+        placeholder={props.placeholder}
+        maxLength={props.maxLength}
+        minLength={props.minLength}
+        className="w-full bg-transparent rounded-md border border-stroke dark:border-dark-3 py-[10px] px-5 text-dark-6 outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2 disabled:border-gray-2"
       />
-    </div>
+    </>
   )
 }
 
-export { TextFieldProps, TextField }
+export { TextField, TextFieldProps }

@@ -1,22 +1,15 @@
-import React from 'react'
+import { FC } from 'react'
 
 type ButtonProps = {
-  onClick?: () => void
-  className?: string
-  type: 'button' | 'submit' | 'reset'
-  text: string
+  label: string
 }
 
-const Button: React.FC<ButtonProps> = ({ type, onClick, className, text }) => {
+const Button: FC<ButtonProps> = (props: ButtonProps) => {
   return (
-    <button
-      type={type}
-      onClick={onClick}
-      className={`bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 ${className}`}
-    >
-      {text}
+    <button className="bg-dark dark:bg-dark-2 border-dark dark:border-dark-2 border rounded-full inline-flex items-center justify-center py-3 px-7 text-center text-base font-medium text-white hover:bg-body-color hover:border-body-color disabled:bg-gray-3 disabled:border-gray-3 disabled:text-dark-5">
+      {props.label}
     </button>
   )
 }
 
-export { Button, ButtonProps }
+export { Button }
