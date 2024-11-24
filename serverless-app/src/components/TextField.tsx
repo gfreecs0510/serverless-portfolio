@@ -1,6 +1,7 @@
 import { FC } from 'react'
 
 type TextFieldProps = {
+  id: string
   label: string
   placeholder: string
   minLength: number
@@ -10,16 +11,18 @@ type TextFieldProps = {
 const TextField: FC<TextFieldProps> = (props: TextFieldProps) => {
   return (
     <>
-      <label className="mb-[10px] block text-base font-medium text-dark dark:text-white">
-        {props.label}
+      <label className="form-control">
+        <div className="label">
+          <span className="label-text">{props.label}</span>
+        </div>
+        <input
+          type="text"
+          placeholder={props.placeholder}
+          className="input"
+          maxLength={props.maxLength}
+          minLength={props.minLength}
+        />
       </label>
-      <input
-        type="text"
-        placeholder={props.placeholder}
-        maxLength={props.maxLength}
-        minLength={props.minLength}
-        className="w-full bg-transparent rounded-md border border-stroke dark:border-dark-3 py-[10px] px-5 text-dark-6 outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2 disabled:border-gray-2"
-      />
     </>
   )
 }

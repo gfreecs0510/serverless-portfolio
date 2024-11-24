@@ -1,25 +1,10 @@
-const defaultTheme = require('tailwindcss/defaultTheme')
-
-module.exports = {
-  mode: 'jit',
+module.exports = { 
   content: [
-    "./src/**/*.{html,js,jsx,ts,tsx}",
-  ],
-  theme: {
-    extend: {
-      fontFamily: {
-        sans: ['InterVariable', ...defaultTheme.fontFamily.sans],
-      },
-      darkMode: 'class', // Enable class-based dark mode
-      colors: {
-        body: {
-          light: '#ffffff', // Light mode body background
-          dark: '#1a202c', // Dark mode body background
-        },
-      }
-    },
-  },
+    "./src/**/*.{js,jsx,ts,tsx}", // Include your project's source files,
+    "./node_modules/flyonui/dist/js/*.js"], // Require only if you want to use FlyonUI JS component
+
   plugins: [
-    require('@tailwindcss/forms'),
-  ],
+    require("flyonui"),
+    require("flyonui/plugin") // Require only if you want to use FlyonUI JS component
+  ]
 }

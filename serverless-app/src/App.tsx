@@ -1,12 +1,12 @@
 import { FC, useState, useEffect } from 'react'
-import Login from './pages/Login'
+import CardList from './components/CardList'
+import { Paginator } from './components/Paginator'
 
 const App: FC = () => {
-  const [darkMode, setDarkMode] = useState(
+  const [darkMode] = useState(
     () => window.matchMedia('(prefers-color-scheme: dark)').matches
   )
 
-  // Effect to apply the theme to the body
   useEffect(() => {
     if (darkMode) {
       document.body.classList.add('dark', 'bg-body-dark', 'text-white')
@@ -19,13 +19,26 @@ const App: FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center">
-      <button
-        onClick={() => setDarkMode(!darkMode)}
-        className="p-4 bg-primary text-white rounded shadow"
-      >
-        Toggle {darkMode ? 'Light' : 'Dark'} Mode
-      </button>
-      <Login />
+      <CardList
+        cards={[
+          { title: 'Software Developer', description: 'Amazon' },
+          { title: 'UX Designer', description: 'Facebook' },
+          { title: 'Team Leader', description: 'Google' },
+          { title: 'Software Developer', description: 'Amazon' },
+          { title: 'UX Designer', description: 'Facebook' },
+          { title: 'Team Leader', description: 'Google' },
+          { title: 'Software Developer', description: 'Amazon' },
+          { title: 'UX Designer', description: 'Facebook' },
+          { title: 'Team Leader', description: 'Google' },
+          { title: 'Software Developer', description: 'Amazon' },
+          { title: 'UX Designer', description: 'Facebook' },
+          { title: 'Team Leader', description: 'Google' },
+          { title: 'Software Developer', description: 'Amazon' },
+          { title: 'UX Designer', description: 'Facebook' },
+          { title: 'Team Leader', description: 'Google' },
+        ]}
+      />
+      <Paginator pages={[1, 2, 3, 4, 5]} />
     </div>
   )
 }

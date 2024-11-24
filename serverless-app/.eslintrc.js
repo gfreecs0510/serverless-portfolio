@@ -24,7 +24,8 @@ module.exports = {
     'react/prop-types': 'off', // Turn off prop-types checking (we're using TypeScript)
     '@typescript-eslint/explicit-module-boundary-types': 'off', // Optional, allows functions without type annotations for return type
     'react/react-in-jsx-scope': 'off', // React is automatically in scope with React 17 JSX transform
-    'prettier/prettier': ['error', { singleQuote: true, semi: false }], // Use Prettier's formatting rules
+    'prettier/prettier': ['error', { singleQuote: true, semi: false }], // Use Prettier's formatting rules,
+    "@typescript-eslint/no-explicit-any": "off"
   },
   env: {
     browser: true,
