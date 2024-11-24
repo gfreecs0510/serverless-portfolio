@@ -1,6 +1,7 @@
 import { FC } from 'react'
+import { CoreComponent } from '../../types/CoreComponent.type'
 
-type TextFieldProps = {
+type TextFieldProps = CoreComponent & {
   id: string
   label: string
   placeholder: string

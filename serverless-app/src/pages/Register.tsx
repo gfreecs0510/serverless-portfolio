@@ -1,5 +1,5 @@
-import { TextField } from '../components/TextField'
-import { Button } from '../components/Button'
+import { TextField } from '../components/core/TextField'
+import { Button } from '../components/core/Button'
 
 export default function Register() {
   return (

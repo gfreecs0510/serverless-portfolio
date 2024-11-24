@@ -1,7 +1,5 @@
 import { FC, useState, useEffect } from 'react'
-import CardList from './components/CardList'
-import { Paginator } from './components/Paginator'
-
+import { SearchResult } from './components/jobs/SearchResult'
 const App: FC = () => {
   const [darkMode] = useState(
     () => window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -18,27 +16,8 @@ const App: FC = () => {
   }, [darkMode])
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <CardList
-        cards={[
-          { title: 'Software Developer', description: 'Amazon' },
-          { title: 'UX Designer', description: 'Facebook' },
-          { title: 'Team Leader', description: 'Google' },
-          { title: 'Software Developer', description: 'Amazon' },
-          { title: 'UX Designer', description: 'Facebook' },
-          { title: 'Team Leader', description: 'Google' },
-          { title: 'Software Developer', description: 'Amazon' },
-          { title: 'UX Designer', description: 'Facebook' },
-          { title: 'Team Leader', description: 'Google' },
-          { title: 'Software Developer', description: 'Amazon' },
-          { title: 'UX Designer', description: 'Facebook' },
-          { title: 'Team Leader', description: 'Google' },
-          { title: 'Software Developer', description: 'Amazon' },
-          { title: 'UX Designer', description: 'Facebook' },
-          { title: 'Team Leader', description: 'Google' },
-        ]}
-      />
-      <Paginator pages={[1, 2, 3, 4, 5]} />
+    <div className="min-h-screen flex flex-row ml-10 mt-10">
+      <SearchResult />
     </div>
   )
 }
