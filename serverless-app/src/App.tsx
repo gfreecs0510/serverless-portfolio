@@ -1,5 +1,6 @@
 import { FC, useState, useEffect } from 'react'
 import { SearchResult } from './components/jobs/SearchResult'
+import { JobDescription } from './components/jobs/JobDescription'
 const App: FC = () => {
   const [darkMode] = useState(
     () => window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -16,8 +17,9 @@ const App: FC = () => {
   }, [darkMode])
 
   return (
-    <div className="min-h-screen flex flex-row ml-10 mt-10">
+    <div className="min-h-screen flex flex-row ml-10 mt-10 gap-10">
       <SearchResult />
+      <JobDescription />
     </div>
   )
 }
