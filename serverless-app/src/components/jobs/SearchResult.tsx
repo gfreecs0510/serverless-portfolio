@@ -9,10 +9,10 @@ type SearchResult = {
 
 const dummy: SearchResult[] = [
   {
-    title: 'Software asdlk;aks;dk;lsakl;dl;ksadl;kaskl;dk;lasdkl;ask;lEngineer',
-    company: 'Tech Solksladklaskl;dlk;askl;das;klsd;klas;kldaskl;dutions Inc.',
-    location: 'San Fran;oasdk;askl;d;klakl;dl;kakl;dsacisco, CA',
-    work_style: ['Hybras;dk;ask;ldskl;aid', 'Full-Remote'],
+    title: 'Senior Software Engineer At TechLabs',
+    company: 'Tech Labs.',
+    location: 'San Francisco, CA',
+    work_style: ['Hybrid', 'Full-Remote'],
   },
   {
     title: 'Software Engineer',
