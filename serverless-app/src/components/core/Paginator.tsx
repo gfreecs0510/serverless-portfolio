@@ -2,53 +2,46 @@ import { FC } from 'react'
 import { CoreComponent } from '../../types/CoreComponent.type'
 
 type PaginatorProps = CoreComponent & {
-  pages: number[] // List of page numbers
-  currentPage: number // Current page for active state
-  onPageChange: (page: number) => void // Callback to handle page change
-  totalPages: number // Total number of pages
+  currentPage: number
+  totalPages: number
 }
 
-const Paginator: FC<PaginatorProps> = ({
-  pages,
-  currentPage,
-  onPageChange,
-  totalPages,
-}) => {
+const Paginator: FC<PaginatorProps> = ({ currentPage, totalPages }) => {
   return (
-    <nav className="flex items-center gap-x-1">
-      {/* Horizontal scroll container */}
-      <div className="flex flex-wrap gap-x-1 overflow-x-auto scrollbar-thin">
+    <div className="card border rounded-none shadow-md p-4 max-w-[350px] items-center mb-10">
+      <nav className="flex items-center gap-x-1">
         <button
-          onClick={() => onPageChange(currentPage - 1)}
-          disabled={currentPage === 1}
+          type="button"
           className="btn btn-text btn-square"
+          aria-label="Previous Button"
         >
-          Previous
+          <span className="icon-[tabler--chevron-left] size-5 rtl:rotate-180"></span>
         </button>
-
-        {/* Render the page number buttons */}
-        {pages.map((page, index) => (
+        <div className="flex items-center gap-x-1">
           <button
-            key={index}
             type="button"
-            className={`btn btn-text btn-square w-auto px-3 ${
-              currentPage === page ? 'text-bg-primary' : ''
-            }`}
-            onClick={() => onPageChange(page)}
+            className="btn btn-text btn-square pointer-events-none"
+            aria-current="page"
           >
-            {page}
+            {currentPage}
           </button>
-        ))}
-
+          <span className="text-base-content/80 mx-3">of</span>
+          <button
+            type="button"
+            className="btn btn-text btn-square pointer-events-none"
+          >
+            {totalPages}
+          </button>
+        </div>
         <button
-          onClick={() => onPageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
+          type="button"
           className="btn btn-text btn-square"
+          aria-label="Next Button"
         >
-          Next
+          <span className="icon-[tabler--chevron-right] size-5 rtl:rotate-180"></span>
         </button>
-      </div>
-    </nav>
+      </nav>
+    </div>
   )
 }
 

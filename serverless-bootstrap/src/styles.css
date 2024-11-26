@@ -1,0 +1,19 @@
+/* styles.css */
+.clickableCard {
+  width: 450px;
+  transition: all 0.3s ease; /* Smooth transition for all properties */
+}
+
+.clickableCard:hover {
+  transform: scale(1.05); /* Slightly enlarge the card */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Add shadow on hover */
+  cursor: pointer; /* Show pointer cursor on hover */
+}
+
+.fullscreen {
+  width: 100vw;
+  max-width: 1366px; /* Ensure it doesn't expand too far */
+  margin: 0 auto;
+  height: 100vh;
+  overflow: hidden;
+}
