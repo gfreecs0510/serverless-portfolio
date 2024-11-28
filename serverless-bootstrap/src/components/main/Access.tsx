@@ -3,7 +3,7 @@ import { Register } from './Register';
 
 function Access() {
   return (
-    <div className="d-flex justify-content-center align-items-center m-5">
+    <div className="d-flex justify-content-center m-5">
       <div className="m-5">
         <Login />
       </div>

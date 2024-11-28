@@ -1,13 +1,13 @@
 import { FC } from 'react'
 
-type SearchResult = {
+type SearchResultProps = {
   title: string
   company: string
   location: string
   work_style: string[]
 }
 
-const dummy: SearchResult[] = [
+const dummy: SearchResultProps[] = [
   {
     title: 'Senior Software Engineer At TechLabs',
     company: 'Tech Labs.',
@@ -76,7 +76,7 @@ const dummy: SearchResult[] = [
   },
 ]
 
-function RenderCard(props: SearchResult) {
+function RenderCard(props: SearchResultProps) {
   return (
     <div className="card border rounded-none shadow-md p-4 max-w-[350px]">
       <div className="card-body">
@@ -103,7 +103,20 @@ function RenderCard(props: SearchResult) {
   )
 }
 
-function RenderCardList(props: SearchResult[]) {
+function RenderSearchCount() {
+  return (
+    <div className="card border rounded-none shadow-md p-4 max-w-[350px]">
+      <div className="card-body text-left">
+        <h5 className="card-title mb-0 truncate max-w-[350px]">
+          Search Results: 1m+
+        </h5>
+        <p className="mb-4 truncate">10 jobs tailored to your profile.</p>
+      </div>
+    </div>
+  )
+}
+
+function RenderCardList(props: SearchResultProps[]) {
   return (
     <div className="flex flex-col">
       {props.map((searchResult) => {
@@ -114,7 +127,12 @@ function RenderCardList(props: SearchResult[]) {
 }
 
 const SearchResult: FC = () => {
-  return <div className="flex flex-col">{RenderCardList(dummy)}</div>
+  return (
+    <div className="flex flex-col">
+      {RenderSearchCount()}
+      {RenderCardList(dummy)}
+    </div>
+  )
 }
 
-export { SearchResult }
+export { SearchResult, SearchResultProps }

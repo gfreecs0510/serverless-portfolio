@@ -5,6 +5,8 @@ module.exports = {
 
   plugins: [
     require("flyonui"),
-    require("flyonui/plugin") // Require only if you want to use FlyonUI JS component
+    require("flyonui/plugin"),
+    require('preline/plugin'),
+    require('@tailwindcss/forms')
   ]
 }
