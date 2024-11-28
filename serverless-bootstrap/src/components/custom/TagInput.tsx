@@ -4,30 +4,39 @@ import Badge from 'react-bootstrap/Badge';
 import AutocompleteDropdown from './AutoCompleteDropdown';
 
 type TagInputProps = {
+  id: string;
   label?: string;
-  options?: string[];
-  onTagsChange: (tags: string[]) => void; // Callback function from parent
+  options: string[];
+  tags: string[];
+  setTags: (tags: string[]) => void;
 };
 
 const TagInput: FC<TagInputProps> = (props: TagInputProps) => {
-  const { label = '', options = [], onTagsChange } = props;
-  const [tags, setTags] = useState<string[]>([]);
+  const {
+    id = '',
+    label = '',
+    options = [],
+    tags = [],
+    setTags = () => {},
+  } = props;
   const [filteredOptions, setFilterOptions] = useState<string[]>(options);
   const [enabled, setEnabled] = useState<boolean>(true);
+  const [value, setValue] = useState<string>('');
 
   const removeTag = (tag: string) => {
     const updatedTags = tags.filter((t) => t !== tag);
     setTags(updatedTags);
-    onTagsChange(updatedTags);
     setFilterOptions((prevOptions) => [...prevOptions, tag]);
   };
 
   const onSelect = (tag: string) => {
     if (tag && options.includes(tag) && !tags.includes(tag)) {
       const updatedTags = [...tags, tag];
+      setValue('');
       setTags(updatedTags);
-      onTagsChange(updatedTags);
       setFilterOptions((prevOptions) => prevOptions.filter((o) => o !== tag));
+    } else {
+      setValue(tag);
     }
   };
 
@@ -37,19 +46,20 @@ const TagInput: FC<TagInputProps> = (props: TagInputProps) => {
   }, [filteredOptions]);
 
   return (
-    <div>
+    <div id={id}>
       {enabled && (
         <AutocompleteDropdown
+          id={id}
           label={label}
           options={filteredOptions}
-          onSelect={onSelect}
-          enabled={enabled}
+          value={value}
+          setValue={onSelect}
         />
       )}
 
       <div className="d-flex flex-wrap mb-2 mt-2 mr-2">
         {tags.map((tag, idx) => (
-          <div key={idx} className="mr-1 mt-1">
+          <div key={`${id}-${idx}`} className="mr-1 mt-1">
             <Badge
               key={idx}
               pill

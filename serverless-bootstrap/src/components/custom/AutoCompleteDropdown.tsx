@@ -2,41 +2,41 @@ import { FC, useState, useRef, useEffect } from 'react';
 import { Dropdown, FormControl, FormLabel } from 'react-bootstrap';
 
 type AutocompleteDropdownProps = {
+  id: string;
   options: string[];
   label?: string;
-  enabled?: boolean;
-  onSelect?: (value: string) => void;
   overlay?: boolean;
+  value: string;
+  setValue: (val: string) => void;
 };
 
 const AutocompleteDropdown: FC<AutocompleteDropdownProps> = ({
   options = [],
   label = '',
-  enabled = true,
-  onSelect = () => {},
   overlay = false,
+  value = '',
+  setValue = () => {},
+  id = '',
 }) => {
-  const [inputValue, setInputValue] = useState('');
   const [show, setShow] = useState(false);
+
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   const filteredOptions = options.filter((option) =>
-    option.toLowerCase().includes(inputValue.toLowerCase())
+    option.toLowerCase().includes(value.toLowerCase())
   );
 
   const handleSelect = (selectedOption: string) => {
-    setInputValue(selectedOption);
+    setValue(selectedOption);
     setShow(false);
-    onSelect(selectedOption);
   };
 
   const validateInput = (value: string) => {
     if (!options.includes(value)) {
-      setInputValue('');
+      setValue('');
       setShow(true);
     } else {
       setShow(false);
-      onSelect(value);
     }
   };
 
@@ -48,11 +48,10 @@ const AutocompleteDropdown: FC<AutocompleteDropdownProps> = ({
         !dropdownRef.current.contains(event.target as Node)
       ) {
         setShow(false);
-        if (inputValue && !filteredOptions.includes(inputValue)) {
-          onSelect('');
-          setInputValue('');
+        if (value && !filteredOptions.includes(value)) {
+          setValue('');
         } else {
-          onSelect(inputValue);
+          setValue(value);
         }
       }
     };
@@ -66,14 +65,10 @@ const AutocompleteDropdown: FC<AutocompleteDropdownProps> = ({
         document.removeEventListener('mousedown', handleClickOutside);
       }
     };
-  }, [show, overlay, inputValue, onSelect]);
-
-  useEffect(() => {
-    setInputValue('');
-  }, [options]);
+  }, [show, overlay, value, setValue]);
 
   return (
-    <div ref={dropdownRef}>
+    <div id={`autocomplete-${id}`} ref={dropdownRef}>
       {label && <FormLabel htmlFor="dropdown-autocomplete">{label}</FormLabel>}
 
       {overlay && show && <div className="overlay" />}
@@ -81,21 +76,21 @@ const AutocompleteDropdown: FC<AutocompleteDropdownProps> = ({
       <Dropdown
         show={show}
         onToggle={(isOpen) => {
-          if (options.length > 0 && enabled && isOpen) {
+          if (options.length > 0 && isOpen) {
             setShow(true);
           }
         }}
       >
-        <Dropdown.Toggle id="dropdown-autocomplete">
-          {options.length > 0 && enabled ? inputValue || 'Select' : 'Disabled'}
+        <Dropdown.Toggle id="dropdown-autocomplete" className="w-100">
+          {options.length > 0 ? value || 'Select' : 'Disabled'}
         </Dropdown.Toggle>
 
         <Dropdown.Menu className="w-100">
           <FormControl
             autoFocus
             placeholder="Type to search..."
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
             onClick={(e) => e.stopPropagation()}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
