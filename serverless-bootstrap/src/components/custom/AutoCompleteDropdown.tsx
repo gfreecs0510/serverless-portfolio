@@ -3,22 +3,18 @@ import { Dropdown, FormControl, FormLabel } from 'react-bootstrap';
 
 type AutocompleteDropdownProps = {
   options: string[];
-  label: string;
+  label?: string;
   enabled?: boolean;
   onSelect?: (value: string) => void;
   overlay?: boolean;
-  maxWidth?: string;
-  width?: string;
 };
 
 const AutocompleteDropdown: FC<AutocompleteDropdownProps> = ({
   options = [],
-  label,
+  label = '',
   enabled = true,
   onSelect = () => {},
   overlay = false,
-  maxWidth = '500px',
-  width = '500px',
 }) => {
   const [inputValue, setInputValue] = useState('');
   const [show, setShow] = useState(false);
@@ -78,7 +74,7 @@ const AutocompleteDropdown: FC<AutocompleteDropdownProps> = ({
 
   return (
     <div ref={dropdownRef}>
-      <FormLabel htmlFor="dropdown-autocomplete">{label}</FormLabel>
+      {label && <FormLabel htmlFor="dropdown-autocomplete">{label}</FormLabel>}
 
       {overlay && show && <div className="overlay" />}
 
@@ -90,7 +86,7 @@ const AutocompleteDropdown: FC<AutocompleteDropdownProps> = ({
           }
         }}
       >
-        <Dropdown.Toggle id="dropdown-autocomplete" style={{ width, maxWidth }}>
+        <Dropdown.Toggle id="dropdown-autocomplete">
           {options.length > 0 && enabled ? inputValue || 'Select' : 'Disabled'}
         </Dropdown.Toggle>
 

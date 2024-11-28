@@ -1,8 +1,7 @@
-import SideBar from '../custom/SideBar';
-import { SearchFilters } from '../job-search/SearchFilters';
+import SearchFiltersSideBar from '../job-search/SearchFiltersSideBar';
 
 function Portfolio() {
-  return <SideBar children={<SearchFilters />} />;
+  return <SearchFiltersSideBar />;
 }
 
 export { Portfolio };

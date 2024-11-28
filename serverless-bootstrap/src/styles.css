@@ -27,3 +27,27 @@
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 999;
 }
+
+.vertical-tab {
+  position: fixed;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  cursor: pointer;
+  writing-mode: vertical-rl; /* Rotate text vertically */
+  text-align: center;
+  border-radius: 0 8px 8px 0;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s;
+}
+
+.vertical-tab:hover {
+  background-color: #0056b3;
+}
+
+.vertical-tab.hidden {
+  display: none;
+}
