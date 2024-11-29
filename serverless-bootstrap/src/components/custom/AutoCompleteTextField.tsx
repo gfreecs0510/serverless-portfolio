@@ -17,7 +17,6 @@ const AutoCompleteTextField: FC<AutoCompleteTextFieldProps> = (
   const { id, options, value = '', setValue = () => {}, label = '' } = props;
   const [show, setShow] = useState<boolean>(false);
   const componentRef = useRef<HTMLDivElement | null>(null);
-
   const filteredOptions = options.filter((option) =>
     option.toLowerCase().includes(value.toLowerCase())
   );

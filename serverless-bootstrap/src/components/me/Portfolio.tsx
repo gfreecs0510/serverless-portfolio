@@ -1,9 +1,9 @@
-import SearchFiltersSideBar from '../job-search/SearchFiltersSideBar';
+import SearchJobsPage from '../job-search/SearchJobsPage';
 
 function Portfolio() {
   return (
     <div className="w-100">
-      <SearchFiltersSideBar />
+      <SearchJobsPage />
     </div>
   );
 }

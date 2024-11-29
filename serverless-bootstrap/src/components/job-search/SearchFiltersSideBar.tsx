@@ -7,82 +7,21 @@ import TagInput from '../custom/TagInput';
 import CheckBoxes from '../custom/CheckBoxes';
 import RadioBoxes from '../custom/RadioBoxes';
 import AutoCompleteTextField from '../custom/AutoCompleteTextField';
+import { useSearchContext } from '../../context/SearchContext';
 
-type SearchFiltersSideBarProps = {
-  test?: boolean;
-};
-
-const countriesAndCitiesObj: any = {
-  USA: ['New York', 'Texas'],
-  'United Kingdom': ['London', 'Manchester'],
-  Japan: ['Tokyo', 'Osaka'],
-};
-
-const workExperienceObj: any = {
-  '0 to 3 years': {
-    min: 0,
-    max: 3,
-  },
-  '3 to 6 years': {
-    min: 3,
-    max: 6,
-  },
-  '7 - 10 years': {
-    min: 7,
-    max: 10,
-  },
-  '10+ years': {
-    min: 10,
-    max: 99,
-  },
-};
-
-const skillsList = ['Java', 'C', 'C++'];
-
-const workTypeList = ['Full-time', 'Part-time', 'Contract'];
-
-const preferencesList = ['On-Site', 'Hybrid', 'Remote'];
-
-const salaryObj: any = {
-  '<1k USD': {
-    min: 0,
-    max: 1,
-  },
-  '1k-3k USD': {
-    min: 1,
-    max: 3,
-  },
-  '3k-7k USD': {
-    min: 3,
-    max: 7,
-  },
-  '7k-20k USD': {
-    min: 7,
-    max: 20,
-  },
-};
-
-const industriesList: string[] = [
-  'Information Technology',
-  'Banking',
-  'Healthcare',
-  'Education',
-  'Retail',
-  'Manufacturing',
-  'Finance',
-  'Telecommunications',
-  'Construction',
-  'Hospitality',
-];
-
-function SearchFiltersSideBar(props: SearchFiltersSideBarProps) {
+function SearchFiltersSideBar() {
   const [show, setShow] = useState(true);
+  const {
+    countriesAndCitiesObject,
+    workExperiencesObject,
+    salaryObject,
+    workTypeList,
+    preferencesList,
+    skillsList,
+    industriesList,
+  } = useSearchContext();
 
-  const [countries] = useState<string[]>(Object.keys(countriesAndCitiesObj));
   const [locations, setLocations] = useState<string[]>([]);
-  const [workExperiences] = useState<string[]>(Object.keys(workExperienceObj));
-  const [salaries] = useState<string[]>(Object.keys(salaryObj));
-
   const [country, setCountry] = useState<string>('');
   const [location, setLocation] = useState<string>('');
   const [workExperience, setWorkExperience] = useState<string>('');
@@ -93,7 +32,7 @@ function SearchFiltersSideBar(props: SearchFiltersSideBarProps) {
   const [salary, setSalary] = useState<string>('');
 
   useEffect(() => {
-    setLocations(countriesAndCitiesObj[country] ?? []);
+    setLocations(countriesAndCitiesObject[country] ?? []);
     setLocation('');
   }, [country]);
 
@@ -111,12 +50,12 @@ function SearchFiltersSideBar(props: SearchFiltersSideBarProps) {
       industries: industries,
     };
     if (workExperience) {
-      body.min_exp = workExperienceObj[workExperience].min_exp;
-      body.max_exp = workExperienceObj[workExperience].max_exp;
+      body.min = workExperiencesObject[workExperience].min;
+      body.max = workExperiencesObject[workExperience].max;
     }
     if (salary) {
-      body.min_salary = salaryObj[salary].min_salary;
-      body.max_salary = salaryObj[salary].max_salary;
+      body.min = salaryObject[salary].min;
+      body.max = salaryObject[salary].max;
     }
     handleClose();
   };
@@ -128,7 +67,7 @@ function SearchFiltersSideBar(props: SearchFiltersSideBarProps) {
         <Accordion.Body>
           <AutoCompleteTextField
             id="country"
-            options={countries}
+            options={Object.keys(countriesAndCitiesObject)}
             value={country}
             setValue={setCountry}
           />
@@ -164,7 +103,7 @@ function SearchFiltersSideBar(props: SearchFiltersSideBarProps) {
         <Accordion.Body>
           <RadioBoxes
             id="workExperiences"
-            options={workExperiences}
+            options={Object.keys(workExperiencesObject)}
             selectedValue={workExperience}
             setSelectedValue={setWorkExperience}
           />
@@ -246,7 +185,7 @@ function SearchFiltersSideBar(props: SearchFiltersSideBarProps) {
         <Accordion.Body>
           <RadioBoxes
             id="salaries"
-            options={salaries}
+            options={Object.keys(salaryObject)}
             selectedValue={salary}
             setSelectedValue={setSalary}
           />
