@@ -1,4 +1,3 @@
-import React from 'react';
 import { Container, Card, Badge, Button } from 'react-bootstrap';
 
 const jobData = [

@@ -5,8 +5,6 @@ import axios from 'axios';
 import { Spinner } from 'react-bootstrap'; // Import the Spinner component from React Bootstrap
 import ErrorPage from '../main/Error';
 import AxiosError from '../../classes/AxiosError';
-import { JobDescription } from './JobDescription';
-import { SearchResultsLists } from './SearchResultsList';
 import JobList from './JobList';
 
 type SearchJobsPageProps = {
