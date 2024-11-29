@@ -1,6 +1,10 @@
-import { FC, useEffect } from 'react';
+import { FC, useEffect, useState } from 'react';
 import SearchFiltersSideBar from './SearchFiltersSideBar';
 import { useSearchContext } from '../../context/SearchContext';
+import axios from 'axios';
+import { Spinner } from 'react-bootstrap'; // Import the Spinner component from React Bootstrap
+import ErrorPage from '../main/Error';
+import AxiosError from '../../classes/AxiosError';
 
 type SearchJobsPageProps = {
   test?: boolean;
@@ -8,6 +12,7 @@ type SearchJobsPageProps = {
 
 const SearchJobsPage: FC<SearchJobsPageProps> = () => {
   const {
+    setRoles,
     setCountriesAndCitiesObject,
     setWorkExperiencesObject,
     setSalaryObject,
@@ -17,70 +22,53 @@ const SearchJobsPage: FC<SearchJobsPageProps> = () => {
     setIndustriesList,
   } = useSearchContext();
 
+  const [isError, setIsError] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const fetchFilters = async () => {
+    try {
+      const response = await axios.get('http://localhost:3000/jobs/filters', {
+        headers: { Accept: 'application/json' },
+      });
+
+      const data = response.data;
+
+      setRoles(data.roles);
+      setCountriesAndCitiesObject(data.countriesAndCities);
+      setWorkExperiencesObject(data.workExperiences);
+      setSalaryObject(data.salaries);
+      setSkillsList(data.skills);
+      setWorkTypeList(data.workType);
+      setPreferencesList(data.preferences);
+      setIndustriesList(data.industries);
+      setLoading(false);
+    } catch (error) {
+      const axiosError = new AxiosError(error);
+      setIsError(true);
+      setLoading(false);
+      setErrorMessage((axiosError as any).message || 'exception handled');
+    }
+  };
+
   useEffect(() => {
-    setCountriesAndCitiesObject({
-      USA: ['New York', 'Texas'],
-      'United Kingdom': ['London', 'Manchester'],
-      Japan: ['Tokyo', 'Osaka'],
-    });
-
-    setWorkExperiencesObject({
-      '0 to 3 years': {
-        min: 0,
-        max: 3,
-      },
-      '3 to 6 years': {
-        min: 3,
-        max: 6,
-      },
-      '7 - 10 years': {
-        min: 7,
-        max: 10,
-      },
-      '10+ years': {
-        min: 10,
-        max: 99,
-      },
-    });
-
-    setSalaryObject({
-      '<1k USD': {
-        min: 0,
-        max: 1,
-      },
-      '1k-3k USD': {
-        min: 1,
-        max: 3,
-      },
-      '3k-7k USD': {
-        min: 3,
-        max: 7,
-      },
-      '7k-20k USD': {
-        min: 7,
-        max: 20,
-      },
-    });
-
-    setSkillsList(['Java', 'C', 'C++']);
-    setWorkTypeList(['Full-time', 'Part-time', 'Contract']);
-    setPreferencesList(['On-Site', 'Hybrid', 'Remote']);
-    setIndustriesList([
-      'Information Technology',
-      'Banking',
-      'Healthcare',
-      'Education',
-      'Retail',
-      'Manufacturing',
-      'Finance',
-      'Telecommunications',
-      'Construction',
-      'Hospitality',
-    ]);
+    fetchFilters();
   }, []);
+
   return (
     <div className="w-100">
-      <SearchFiltersSideBar />
+      {!isError && (
+        <SearchFiltersSideBar loading={loading} setLoading={setLoading} />
+      )}
+      {loading && (
+        <div
+          className="d-flex justify-content-center align-items-center"
+          style={{ height: '100vh' }}
+        >
+          <Spinner animation="border" variant="primary" />
+        </div>
+      )}
+      {isError && <ErrorPage errorMessage={errorMessage} />}
     </div>
   );
 };

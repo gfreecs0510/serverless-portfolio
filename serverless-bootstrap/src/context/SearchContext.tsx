@@ -13,6 +13,7 @@ type SearchContextType = {
   workTypeList: string[];
   preferencesList: string[];
   industriesList: string[];
+  roles: string[];
   setCountriesAndCitiesObject: React.Dispatch<
     React.SetStateAction<ObjectWithStringArrayVal>
   >;
@@ -22,6 +23,7 @@ type SearchContextType = {
   setWorkTypeList: React.Dispatch<React.SetStateAction<string[]>>;
   setPreferencesList: React.Dispatch<React.SetStateAction<string[]>>;
   setIndustriesList: React.Dispatch<React.SetStateAction<string[]>>;
+  setRoles: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
 const defaultContext: SearchContextType = {
@@ -32,6 +34,7 @@ const defaultContext: SearchContextType = {
   workTypeList: [],
   preferencesList: [],
   industriesList: [],
+  roles: [],
   setCountriesAndCitiesObject: () => {},
   setWorkExperiencesObject: () => {},
   setSalaryObject: () => {},
@@ -39,6 +42,7 @@ const defaultContext: SearchContextType = {
   setWorkTypeList: () => {},
   setPreferencesList: () => {},
   setIndustriesList: () => {},
+  setRoles: () => {},
 };
 
 const SearchContext = createContext<SearchContextType>(defaultContext);
@@ -53,6 +57,7 @@ const SearchProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [workTypeList, setWorkTypeList] = useState<string[]>([]);
   const [preferencesList, setPreferencesList] = useState<string[]>([]);
   const [industriesList, setIndustriesList] = useState<string[]>([]);
+  const [roles, setRoles] = useState<string[]>([]);
 
   return (
     <SearchContext.Provider
@@ -64,6 +69,7 @@ const SearchProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         workTypeList,
         preferencesList,
         industriesList,
+        roles,
         setCountriesAndCitiesObject,
         setWorkExperiencesObject,
         setSalaryObject,
@@ -71,6 +77,7 @@ const SearchProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         setWorkTypeList,
         setPreferencesList,
         setIndustriesList,
+        setRoles,
       }}
     >
       {children}

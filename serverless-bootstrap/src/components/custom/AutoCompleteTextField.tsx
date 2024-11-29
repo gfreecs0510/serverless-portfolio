@@ -63,7 +63,7 @@ const AutoCompleteTextField: FC<AutoCompleteTextFieldProps> = (
 
   const renderOptions = () => {
     if (filteredOptions.length > 0) {
-      return filteredOptions.map((result, index) => (
+      return filteredOptions.slice(0, 20).map((result, index) => (
         <ListGroup.Item
           key={index}
           className="typeahead-list-group-item"

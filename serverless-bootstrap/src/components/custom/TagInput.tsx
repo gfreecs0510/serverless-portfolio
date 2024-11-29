@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Badge from 'react-bootstrap/Badge';
 import FormLabel from 'react-bootstrap/FormLabel';
@@ -9,7 +9,7 @@ type TagInputProps = {
   label?: string;
   options: string[];
   tags: string[];
-  setTags: (tags: string[]) => void;
+  setTags: Dispatch<SetStateAction<string[]>>;
 };
 
 const TagInput: FC<TagInputProps> = (props: TagInputProps) => {

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Dispatch, SetStateAction } from 'react';
 import Button from 'react-bootstrap/Button';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import Accordion from 'react-bootstrap/Accordion';
@@ -8,8 +8,15 @@ import CheckBoxes from '../custom/CheckBoxes';
 import RadioBoxes from '../custom/RadioBoxes';
 import AutoCompleteTextField from '../custom/AutoCompleteTextField';
 import { useSearchContext } from '../../context/SearchContext';
+import { Spinner } from 'react-bootstrap';
 
-function SearchFiltersSideBar() {
+type SearchFiltersSideBarProps = {
+  loading: boolean;
+  setLoading: Dispatch<SetStateAction<boolean>>;
+};
+
+function SearchFiltersSideBar(props: SearchFiltersSideBarProps) {
+  const { loading, setLoading } = props;
   const [show, setShow] = useState(true);
   const {
     countriesAndCitiesObject,
@@ -19,9 +26,10 @@ function SearchFiltersSideBar() {
     preferencesList,
     skillsList,
     industriesList,
+    roles,
   } = useSearchContext();
 
-  const [locations, setLocations] = useState<string[]>([]);
+  const [role, setRole] = useState<string>('');
   const [country, setCountry] = useState<string>('');
   const [location, setLocation] = useState<string>('');
   const [workExperience, setWorkExperience] = useState<string>('');
@@ -31,15 +39,15 @@ function SearchFiltersSideBar() {
   const [industries, setIndustries] = useState<string[]>([]);
   const [salary, setSalary] = useState<string>('');
 
+  const locations = countriesAndCitiesObject[country] ?? [];
+
   useEffect(() => {
-    setLocations(countriesAndCitiesObject[country] ?? []);
     setLocation('');
   }, [country]);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  //TODO: now i need to call the API :)
   const handleSubmit = () => {
     const body: any = {
       country: country,
@@ -57,7 +65,28 @@ function SearchFiltersSideBar() {
       body.min = salaryObject[salary].min;
       body.max = salaryObject[salary].max;
     }
+    setLoading(true);
     handleClose();
+
+    setTimeout(() => {
+      setLoading(false);
+    }, 5000);
+  };
+
+  const renderRoles = () => {
+    return (
+      <Accordion.Item eventKey="role">
+        <Accordion.Header>Roles: {role}</Accordion.Header>
+        <Accordion.Body>
+          <AutoCompleteTextField
+            id="role"
+            options={roles}
+            value={role}
+            setValue={setRole}
+          />
+        </Accordion.Body>
+      </Accordion.Item>
+    );
   };
 
   const renderCountries = () => {
@@ -203,13 +232,32 @@ function SearchFiltersSideBar() {
       </div>
 
       <Offcanvas show={show} onHide={handleClose}>
-        <Offcanvas.Header closeButton>
+        <Offcanvas.Header>
           <Offcanvas.Title>Search Jobs</Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>
+          {loading && (
+            <div
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                zIndex: 10,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <Spinner animation="border" role="status" />
+            </div>
+          )}
           <Accordion
             alwaysOpen
             defaultActiveKey={[
+              'role',
               'country',
               'location',
               'work_exp',
@@ -220,6 +268,7 @@ function SearchFiltersSideBar() {
               'salary',
             ]}
           >
+            {renderRoles()}
             {renderCountries()}
             {renderLocations()}
             {renderWorkExperiences()}

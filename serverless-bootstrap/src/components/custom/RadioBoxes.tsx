@@ -1,11 +1,11 @@
-import { FC } from 'react';
+import { Dispatch, FC, SetStateAction } from 'react';
 import Form from 'react-bootstrap/Form';
 
 type RadioBoxesProps = {
   id: string;
   options: string[];
   selectedValue: string;
-  setSelectedValue: (value: string) => void;
+  setSelectedValue: Dispatch<SetStateAction<string>>;
 };
 
 const RadioBoxes: FC<RadioBoxesProps> = (props: RadioBoxesProps) => {

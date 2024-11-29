@@ -1,10 +1,11 @@
+import { Dispatch, SetStateAction } from 'react';
 import Form from 'react-bootstrap/Form';
 
 type CheckBoxesType = {
   id: string;
   options: string[];
   checkedItems: string[];
-  setCheckedItems: (values: string[]) => void;
+  setCheckedItems: Dispatch<SetStateAction<string[]>>;
 };
 
 function CheckBoxes(props: CheckBoxesType) {

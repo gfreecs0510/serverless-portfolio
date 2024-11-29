@@ -1,4 +1,11 @@
-import { FC, useState, useRef, useEffect } from 'react';
+import {
+  FC,
+  useState,
+  useRef,
+  useEffect,
+  Dispatch,
+  SetStateAction,
+} from 'react';
 import { Dropdown, FormControl, FormLabel } from 'react-bootstrap';
 
 type AutocompleteDropdownProps = {
@@ -7,7 +14,7 @@ type AutocompleteDropdownProps = {
   label?: string;
   overlay?: boolean;
   value: string;
-  setValue: (val: string) => void;
+  setValue: Dispatch<SetStateAction<string>>;
 };
 
 const AutocompleteDropdown: FC<AutocompleteDropdownProps> = ({
