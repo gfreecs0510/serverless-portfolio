@@ -6,7 +6,7 @@ type ObjectMinMax = {
 };
 
 type SearchContextType = {
-  countriesAndCitiesObject: ObjectWithStringArrayVal;
+  countriesAndLocationsObject: ObjectWithStringArrayVal;
   workExperiencesObject: ObjectMinMax;
   salaryObject: ObjectMinMax;
   skillsList: string[];
@@ -14,7 +14,7 @@ type SearchContextType = {
   preferencesList: string[];
   industriesList: string[];
   roles: string[];
-  setCountriesAndCitiesObject: React.Dispatch<
+  setCountriesAndLocationsObject: React.Dispatch<
     React.SetStateAction<ObjectWithStringArrayVal>
   >;
   setWorkExperiencesObject: React.Dispatch<React.SetStateAction<ObjectMinMax>>;
@@ -27,7 +27,7 @@ type SearchContextType = {
 };
 
 const defaultContext: SearchContextType = {
-  countriesAndCitiesObject: {},
+  countriesAndLocationsObject: {},
   workExperiencesObject: {},
   salaryObject: {},
   skillsList: [],
@@ -35,7 +35,7 @@ const defaultContext: SearchContextType = {
   preferencesList: [],
   industriesList: [],
   roles: [],
-  setCountriesAndCitiesObject: () => {},
+  setCountriesAndLocationsObject: () => {},
   setWorkExperiencesObject: () => {},
   setSalaryObject: () => {},
   setSkillsList: () => {},
@@ -48,7 +48,7 @@ const defaultContext: SearchContextType = {
 const SearchContext = createContext<SearchContextType>(defaultContext);
 
 const SearchProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [countriesAndCitiesObject, setCountriesAndCitiesObject] =
+  const [countriesAndLocationsObject, setCountriesAndLocationsObject] =
     useState<ObjectWithStringArrayVal>({});
   const [workExperiencesObject, setWorkExperiencesObject] =
     useState<ObjectMinMax>({});
@@ -62,7 +62,7 @@ const SearchProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <SearchContext.Provider
       value={{
-        countriesAndCitiesObject,
+        countriesAndLocationsObject,
         workExperiencesObject,
         salaryObject,
         skillsList,
@@ -70,7 +70,7 @@ const SearchProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         preferencesList,
         industriesList,
         roles,
-        setCountriesAndCitiesObject,
+        setCountriesAndLocationsObject,
         setWorkExperiencesObject,
         setSalaryObject,
         setSkillsList,

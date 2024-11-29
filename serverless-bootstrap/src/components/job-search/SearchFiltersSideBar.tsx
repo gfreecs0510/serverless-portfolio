@@ -9,6 +9,7 @@ import RadioBoxes from '../custom/RadioBoxes';
 import AutoCompleteTextField from '../custom/AutoCompleteTextField';
 import { useSearchContext } from '../../context/SearchContext';
 import { Spinner } from 'react-bootstrap';
+import axios from 'axios';
 
 type SearchFiltersSideBarProps = {
   loading: boolean;
@@ -19,7 +20,7 @@ function SearchFiltersSideBar(props: SearchFiltersSideBarProps) {
   const { loading, setLoading } = props;
   const [show, setShow] = useState(true);
   const {
-    countriesAndCitiesObject,
+    countriesAndLocationsObject,
     workExperiencesObject,
     salaryObject,
     workTypeList,
@@ -38,8 +39,8 @@ function SearchFiltersSideBar(props: SearchFiltersSideBarProps) {
   const [skills, setSkills] = useState<string[]>([]);
   const [industries, setIndustries] = useState<string[]>([]);
   const [salary, setSalary] = useState<string>('');
-
-  const locations = countriesAndCitiesObject[country] ?? [];
+  console.log(countriesAndLocationsObject);
+  const locations = countriesAndLocationsObject[country] ?? [];
 
   useEffect(() => {
     setLocation('');
@@ -48,29 +49,21 @@ function SearchFiltersSideBar(props: SearchFiltersSideBarProps) {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
+  const fetchJobSearchResults = async () => {
+    const response = await axios.post('http://localhost:3000/jobs/search', {
+      headers: { Accept: 'application/json' },
+    });
+
+    console.log(response);
+  };
+
   const handleSubmit = () => {
-    const body: any = {
-      country: country,
-      location: location,
-      work_type: workTypes,
-      preferencesList: preferences,
-      skillsList: skills,
-      industries: industries,
-    };
-    if (workExperience) {
-      body.min = workExperiencesObject[workExperience].min;
-      body.max = workExperiencesObject[workExperience].max;
-    }
-    if (salary) {
-      body.min = salaryObject[salary].min;
-      body.max = salaryObject[salary].max;
-    }
     setLoading(true);
     handleClose();
 
-    setTimeout(() => {
+    fetchJobSearchResults().then(() => {
       setLoading(false);
-    }, 5000);
+    });
   };
 
   const renderRoles = () => {
@@ -96,7 +89,7 @@ function SearchFiltersSideBar(props: SearchFiltersSideBarProps) {
         <Accordion.Body>
           <AutoCompleteTextField
             id="country"
-            options={Object.keys(countriesAndCitiesObject)}
+            options={Object.keys(countriesAndLocationsObject)}
             value={country}
             setValue={setCountry}
           />

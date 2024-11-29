@@ -13,7 +13,7 @@ type SearchJobsPageProps = {
 const SearchJobsPage: FC<SearchJobsPageProps> = () => {
   const {
     setRoles,
-    setCountriesAndCitiesObject,
+    setCountriesAndLocationsObject,
     setWorkExperiencesObject,
     setSalaryObject,
     setSkillsList,
@@ -35,7 +35,7 @@ const SearchJobsPage: FC<SearchJobsPageProps> = () => {
       const data = response.data;
 
       setRoles(data.roles);
-      setCountriesAndCitiesObject(data.countriesAndCities);
+      setCountriesAndLocationsObject(data.countriesAndLocations);
       setWorkExperiencesObject(data.workExperiences);
       setSalaryObject(data.salaries);
       setSkillsList(data.skills);
