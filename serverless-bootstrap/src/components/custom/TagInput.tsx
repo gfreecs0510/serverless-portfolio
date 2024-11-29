@@ -1,7 +1,8 @@
 import { FC, useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Badge from 'react-bootstrap/Badge';
-import AutocompleteDropdown from './AutoCompleteDropdown';
+import FormLabel from 'react-bootstrap/FormLabel';
+import AutoCompleteTextField from './AutoCompleteTextField';
 
 type TagInputProps = {
   id: string;
@@ -26,19 +27,21 @@ const TagInput: FC<TagInputProps> = (props: TagInputProps) => {
   const removeTag = (tag: string) => {
     const updatedTags = tags.filter((t) => t !== tag);
     setTags(updatedTags);
-    setFilterOptions((prevOptions) => [...prevOptions, tag]);
   };
 
   const onSelect = (tag: string) => {
-    if (tag && options.includes(tag) && !tags.includes(tag)) {
+    if (tag && filteredOptions.includes(tag) && !tags.includes(tag)) {
       const updatedTags = [...tags, tag];
       setValue('');
       setTags(updatedTags);
-      setFilterOptions((prevOptions) => prevOptions.filter((o) => o !== tag));
     } else {
       setValue(tag);
     }
   };
+
+  useEffect(() => {
+    setFilterOptions(options.filter((p) => !tags.includes(p)));
+  }, [tags]);
 
   useEffect(() => {
     if (filteredOptions.length > 0) setEnabled(true);
@@ -47,14 +50,20 @@ const TagInput: FC<TagInputProps> = (props: TagInputProps) => {
 
   return (
     <div id={id}>
+      {label && <FormLabel htmlFor="dropdown-autocomplete">{label}</FormLabel>}
+
       {enabled && (
-        <AutocompleteDropdown
+        <AutoCompleteTextField
           id={id}
           label={label}
           options={filteredOptions}
           value={value}
           setValue={onSelect}
         />
+      )}
+
+      {!enabled && (
+        <FormLabel htmlFor="dropdown-autocomplete">No more tags</FormLabel>
       )}
 
       <div className="d-flex flex-wrap mb-2 mt-2 mr-2">

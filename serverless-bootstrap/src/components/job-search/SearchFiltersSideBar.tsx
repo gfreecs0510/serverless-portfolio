@@ -7,6 +7,7 @@ import AutocompleteDropdown from '../custom/AutoCompleteDropdown';
 import TagInput from '../custom/TagInput';
 import CheckBoxes from '../custom/CheckBoxes';
 import RadioBoxes from '../custom/RadioBoxes';
+import AutoCompleteTextField from '../custom/AutoCompleteTextField';
 
 type SearchFiltersSideBarProps = {
   test?: boolean;
@@ -94,6 +95,7 @@ function SearchFiltersSideBar(props: SearchFiltersSideBarProps) {
 
   useEffect(() => {
     setLocations(countriesAndCitiesObj[country] ?? []);
+    setLocation('');
   }, [country]);
 
   const handleClose = () => setShow(false);
@@ -125,8 +127,8 @@ function SearchFiltersSideBar(props: SearchFiltersSideBarProps) {
       <Accordion.Item eventKey="country">
         <Accordion.Header>Country: {country}</Accordion.Header>
         <Accordion.Body>
-          <AutocompleteDropdown
-            id="countries"
+          <AutoCompleteTextField
+            id="country"
             options={countries}
             value={country}
             setValue={setCountry}
@@ -142,7 +144,7 @@ function SearchFiltersSideBar(props: SearchFiltersSideBarProps) {
         <Accordion.Header>Location: {location}</Accordion.Header>
         <Accordion.Body>
           {locations && locations.length > 0 ? (
-            <AutocompleteDropdown
+            <AutoCompleteTextField
               id="locations"
               options={locations}
               value={location}

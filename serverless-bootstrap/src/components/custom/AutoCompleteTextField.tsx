@@ -1,46 +1,43 @@
 import { FC, useEffect, useState, useRef } from 'react';
 import Form from 'react-bootstrap/Form';
 import ListGroup from 'react-bootstrap/ListGroup';
-//TODO: i need to enhance this, this one is much better
+import FormLabel from 'react-bootstrap/FormLabel';
+
 type AutoCompleteTextFieldProps = {
+  label?: string;
+  id: string;
   options: string[];
+  value: string;
+  setValue: (value: string) => void;
 };
 
 const AutoCompleteTextField: FC<AutoCompleteTextFieldProps> = (
   props: AutoCompleteTextFieldProps
 ) => {
-  const { options } = props;
-  const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [value, setValue] = useState<string>('');
+  const { id, options, value = '', setValue = () => {}, label = '' } = props;
   const [show, setShow] = useState<boolean>(false);
   const componentRef = useRef<HTMLDivElement | null>(null);
 
-  const onChange = (e: any) => {
-    const value: string = e.target.value;
-    setValue(value);
-    if (options.includes(value)) {
-      setShow(false);
-    } else {
-      setShow(true);
-      const filtered = options.filter((item) =>
-        item.toLocaleLowerCase().includes(value.toLocaleLowerCase())
-      );
-      if (filtered.length != 0) {
-        setSuggestions(filtered);
-      } else {
-        setSuggestions(options);
-      }
-    }
-  };
+  const filteredOptions = options.filter((option) =>
+    option.toLowerCase().includes(value.toLowerCase())
+  );
 
   const onValueSelected = (selectedName: string) => {
+    setShow(false);
     setValue(selectedName);
-    setSuggestions([]);
   };
 
   const onFocus = () => {
     setShow(true);
-    setSuggestions(options);
+  };
+
+  const validateInput = (value: string) => {
+    if (!filteredOptions.includes(value)) {
+      setValue('');
+      setShow(true);
+    } else {
+      setShow(false);
+    }
   };
 
   useEffect(() => {
@@ -50,21 +47,24 @@ const AutoCompleteTextField: FC<AutoCompleteTextFieldProps> = (
         !componentRef.current.contains(event.target as Node)
       ) {
         setShow(false);
-        setSuggestions([]);
-        setValue(''); // Reset the input value when clicked outside
+        if (value && !filteredOptions.includes(value)) {
+          setValue('');
+        } else {
+          setValue(value);
+        }
       }
     };
+
     document.addEventListener('mousedown', handleClickOutside);
 
-    // Cleanup the event listener when the component is unmounted
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [show, value, setSuggestions]);
+  }, [value]);
 
-  const renderSuggestions = () => {
-    if (show) {
-      return suggestions.map((result, index) => (
+  const renderOptions = () => {
+    if (filteredOptions.length > 0) {
+      return filteredOptions.map((result, index) => (
         <ListGroup.Item
           key={index}
           className="typeahead-list-group-item"
@@ -73,21 +73,44 @@ const AutoCompleteTextField: FC<AutoCompleteTextFieldProps> = (
           {result}
         </ListGroup.Item>
       ));
+    } else {
+      return (
+        <ListGroup.Item key="na" className="typeahead-list-group-item">
+          No results found
+        </ListGroup.Item>
+      );
     }
   };
 
   return (
-    <div className="App">
-      <Form.Group className="typeahead-form-group">
+    <div className="App" ref={componentRef} id={id}>
+      {label && <FormLabel htmlFor="dropdown-autocomplete">{label}</FormLabel>}
+
+      <Form.Group
+        className="typeahead-form-group"
+        style={{ position: 'relative' }}
+      >
+        {' '}
         <Form.Control
           type="text"
           autoComplete="off"
-          onChange={onChange}
+          onChange={(e) => setValue(e.target.value)}
           onFocus={onFocus}
           value={value}
+          placeholder="Enter options..."
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              const currentValue = (e.target as HTMLInputElement).value;
+              validateInput(currentValue);
+              e.preventDefault();
+            }
+          }}
         />
-        <ListGroup className="typeahead-list-group">
-          {renderSuggestions()}
+        <ListGroup
+          className="position-absolute w-100 bg-white border border-secondary rounded"
+          style={{ top: '100%', zIndex: 1050 }}
+        >
+          {show && renderOptions()}
         </ListGroup>
       </Form.Group>
     </div>

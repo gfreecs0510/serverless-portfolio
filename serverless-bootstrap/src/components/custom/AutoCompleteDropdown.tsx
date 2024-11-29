@@ -32,7 +32,7 @@ const AutocompleteDropdown: FC<AutocompleteDropdownProps> = ({
   };
 
   const validateInput = (value: string) => {
-    if (!options.includes(value)) {
+    if (!filteredOptions.includes(value)) {
       setValue('');
       setShow(true);
     } else {
@@ -65,7 +65,7 @@ const AutocompleteDropdown: FC<AutocompleteDropdownProps> = ({
         document.removeEventListener('mousedown', handleClickOutside);
       }
     };
-  }, [show, overlay, value, setValue]);
+  }, [overlay, value]);
 
   return (
     <div id={`autocomplete-${id}`} ref={dropdownRef}>
@@ -76,13 +76,13 @@ const AutocompleteDropdown: FC<AutocompleteDropdownProps> = ({
       <Dropdown
         show={show}
         onToggle={(isOpen) => {
-          if (options.length > 0 && isOpen) {
+          if (filteredOptions.length > 0 && isOpen) {
             setShow(true);
           }
         }}
       >
         <Dropdown.Toggle id="dropdown-autocomplete" className="w-100">
-          {options.length > 0 ? value || 'Select' : 'Disabled'}
+          {filteredOptions.length > 0 ? value || 'Select' : 'Disabled'}
         </Dropdown.Toggle>
 
         <Dropdown.Menu className="w-100">
