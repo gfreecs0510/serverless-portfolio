@@ -39,7 +39,6 @@ function SearchFiltersSideBar(props: SearchFiltersSideBarProps) {
   const [skills, setSkills] = useState<string[]>([]);
   const [industries, setIndustries] = useState<string[]>([]);
   const [salary, setSalary] = useState<string>('');
-  console.log(countriesAndLocationsObject);
   const locations = countriesAndLocationsObject[country] ?? [];
 
   useEffect(() => {
@@ -69,7 +68,7 @@ function SearchFiltersSideBar(props: SearchFiltersSideBarProps) {
   const renderRoles = () => {
     return (
       <Accordion.Item eventKey="role">
-        <Accordion.Header>Roles: {role}</Accordion.Header>
+        <Accordion.Header>Role: {role}</Accordion.Header>
         <Accordion.Body>
           <AutoCompleteTextField
             id="role"

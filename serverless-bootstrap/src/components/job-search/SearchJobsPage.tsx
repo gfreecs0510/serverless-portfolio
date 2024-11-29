@@ -5,6 +5,9 @@ import axios from 'axios';
 import { Spinner } from 'react-bootstrap'; // Import the Spinner component from React Bootstrap
 import ErrorPage from '../main/Error';
 import AxiosError from '../../classes/AxiosError';
+import { JobDescription } from './JobDescription';
+import { SearchResultsLists } from './SearchResultsList';
+import JobList from './JobList';
 
 type SearchJobsPageProps = {
   test?: boolean;
@@ -58,7 +61,10 @@ const SearchJobsPage: FC<SearchJobsPageProps> = () => {
   return (
     <div className="w-100">
       {!isError && (
-        <SearchFiltersSideBar loading={loading} setLoading={setLoading} />
+        <>
+          <SearchFiltersSideBar loading={loading} setLoading={setLoading} />
+          <JobList />
+        </>
       )}
       {loading && (
         <div

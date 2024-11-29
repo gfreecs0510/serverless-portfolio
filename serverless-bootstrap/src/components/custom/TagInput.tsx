@@ -20,9 +20,11 @@ const TagInput: FC<TagInputProps> = (props: TagInputProps) => {
     tags = [],
     setTags = () => {},
   } = props;
-  const [filteredOptions, setFilterOptions] = useState<string[]>(options);
+  console.log('first', options);
   const [enabled, setEnabled] = useState<boolean>(true);
   const [value, setValue] = useState<string>('');
+
+  const filteredOptions = options.filter((o) => !tags.includes(o));
 
   const removeTag = (tag: string) => {
     const updatedTags = tags.filter((t) => t !== tag);
@@ -30,22 +32,22 @@ const TagInput: FC<TagInputProps> = (props: TagInputProps) => {
   };
 
   const onSelect = (tag: string) => {
-    if (tag && filteredOptions.includes(tag) && !tags.includes(tag)) {
-      const updatedTags = [...tags, tag];
+    if (tag && options.includes(tag) && !tags.includes(tag)) {
       setValue('');
-      setTags(updatedTags);
+      setTags((updatedTags) => [...updatedTags, tag]);
     } else {
       setValue(tag);
     }
   };
 
   useEffect(() => {
-    setFilterOptions(options.filter((p) => !tags.includes(p)));
-  }, [tags]);
+    console.log('second', options);
 
-  useEffect(() => {
-    if (filteredOptions.length > 0) setEnabled(true);
-    else setEnabled(false);
+    if (filteredOptions.length > 0) {
+      setEnabled(true);
+    } else {
+      setEnabled(false);
+    }
   }, [filteredOptions]);
 
   return (
