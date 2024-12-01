@@ -13,6 +13,7 @@ type SearchJobsPageProps = {
 
 const SearchJobsPage: FC<SearchJobsPageProps> = () => {
   const {
+    jobs,
     setRoles,
     setCountriesAndLocationsObject,
     setWorkExperiencesObject,
@@ -61,7 +62,7 @@ const SearchJobsPage: FC<SearchJobsPageProps> = () => {
       {!isError && (
         <>
           <SearchFiltersSideBar loading={loading} setLoading={setLoading} />
-          <JobList />
+          <JobList jobs={jobs} />
         </>
       )}
       {loading && (

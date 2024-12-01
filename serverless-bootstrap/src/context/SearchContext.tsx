@@ -14,6 +14,7 @@ type SearchContextType = {
   preferencesList: string[];
   industriesList: string[];
   roles: string[];
+  jobs: any[];
   setCountriesAndLocationsObject: React.Dispatch<
     React.SetStateAction<ObjectWithStringArrayVal>
   >;
@@ -24,6 +25,7 @@ type SearchContextType = {
   setPreferencesList: React.Dispatch<React.SetStateAction<string[]>>;
   setIndustriesList: React.Dispatch<React.SetStateAction<string[]>>;
   setRoles: React.Dispatch<React.SetStateAction<string[]>>;
+  setJobs: React.Dispatch<React.SetStateAction<any[]>>;
 };
 
 const defaultContext: SearchContextType = {
@@ -35,6 +37,7 @@ const defaultContext: SearchContextType = {
   preferencesList: [],
   industriesList: [],
   roles: [],
+  jobs: [],
   setCountriesAndLocationsObject: () => {},
   setWorkExperiencesObject: () => {},
   setSalaryObject: () => {},
@@ -43,6 +46,7 @@ const defaultContext: SearchContextType = {
   setPreferencesList: () => {},
   setIndustriesList: () => {},
   setRoles: () => {},
+  setJobs: () => {},
 };
 
 const SearchContext = createContext<SearchContextType>(defaultContext);
@@ -58,6 +62,7 @@ const SearchProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [preferencesList, setPreferencesList] = useState<string[]>([]);
   const [industriesList, setIndustriesList] = useState<string[]>([]);
   const [roles, setRoles] = useState<string[]>([]);
+  const [jobs, setJobs] = useState<any[]>([]);
 
   return (
     <SearchContext.Provider
@@ -70,6 +75,7 @@ const SearchProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         preferencesList,
         industriesList,
         roles,
+        jobs,
         setCountriesAndLocationsObject,
         setWorkExperiencesObject,
         setSalaryObject,
@@ -78,6 +84,7 @@ const SearchProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         setPreferencesList,
         setIndustriesList,
         setRoles,
+        setJobs,
       }}
     >
       {children}

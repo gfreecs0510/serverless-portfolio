@@ -28,6 +28,7 @@ function SearchFiltersSideBar(props: SearchFiltersSideBarProps) {
     skillsList,
     industriesList,
     roles,
+    setJobs,
   } = useSearchContext();
 
   const [role, setRole] = useState<string>('');
@@ -49,11 +50,29 @@ function SearchFiltersSideBar(props: SearchFiltersSideBarProps) {
   const handleShow = () => setShow(true);
 
   const fetchJobSearchResults = async () => {
-    const response = await axios.post('http://localhost:3000/jobs/search', {
-      headers: { Accept: 'application/json' },
-    });
+    const body = {
+      country,
+      location,
+      role,
+      preferences,
+      skills,
+      industries,
+      description: [],
+      minSalary: 0,
+      maxSalary: 0,
+      minExp: 0,
+      maxExp: 0,
+    };
 
-    console.log(response);
+    const response = await axios.post(
+      'http://localhost:3000/jobs/search',
+      body,
+      {
+        headers: { Accept: 'application/json' },
+      }
+    );
+
+    setJobs(response.data);
   };
 
   const handleSubmit = () => {

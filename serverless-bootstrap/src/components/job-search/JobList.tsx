@@ -1,44 +1,37 @@
-import { Container, Card, Badge, Button } from 'react-bootstrap';
+import { Container, Card, Badge, Button, Collapse } from 'react-bootstrap';
+import { useState } from 'react';
 
-const jobData = [
-  {
-    id: 'job-1',
-    role: 'Software Engineer',
-    company: 'TechCorp',
-    country: 'USA',
-    location: 'San Francisco',
-    workTypes: ['Full-time', 'Remote'],
-  },
-  {
-    id: 'job-2',
-    role: 'Data Analyst',
-    company: 'Data Solutions Inc.',
-    country: 'Canada',
-    location: 'Toronto',
-    workTypes: ['Part-time', 'On-Site'],
-  },
-  {
-    id: 'job-3',
-    role: 'Frontend Developer',
-    company: 'Webify',
-    country: 'United Kingdom',
-    location: 'London',
-    workTypes: ['Full-time', 'Hybrid'],
-  },
-  {
-    id: 'job-4',
-    role: 'Backend Developer',
-    company: 'CloudWorks',
-    country: 'Germany',
-    location: 'Berlin',
-    workTypes: ['Full-time', 'On-Site'],
-  },
-];
+type JobListProps = {
+  jobs: Job[];
+};
 
-const JobList = () => {
+type Job = {
+  id: string;
+  role: string;
+  company: string;
+  country: string;
+  location: string;
+  minExp: number;
+  maxExp: number;
+  workTypes: string[];
+  preferences: string[];
+  skills: string[];
+  industries: string;
+  minSalary: number;
+  maxSalary: number;
+  description: string;
+};
+
+const JobList = (props: JobListProps) => {
+  const [openJobId, setOpenJobId] = useState<string | null>(null);
+
+  const handleToggle = (id: string) => {
+    setOpenJobId(openJobId === id ? null : id); // Toggle collapse on button click
+  };
+
   return (
     <Container fluid="md" className="mt-4 mb-4">
-      {jobData.map((job) => (
+      {props.jobs.map((job) => (
         <Card className="mb-4 shadow-sm" key={job.id}>
           <Badge
             bg="success"
@@ -51,12 +44,15 @@ const JobList = () => {
           <Card.Body>
             <Card.Title>{job.role}</Card.Title>
             <Card.Subtitle className="mb-2 text-muted">
+              At {job.company}
+            </Card.Subtitle>
+            <Card.Subtitle className="mb-2 text-muted">
               {job.location}, {job.country}
             </Card.Subtitle>
             <Card.Text>
-              <strong>Experience:</strong> 0 - 3 years
+              <strong>Experience:</strong> {job.minExp} - {job.maxExp} years
               <br />
-              <strong>Salary:</strong> $1k - $3k
+              <strong>Salary:</strong> ${job.minSalary} - ${job.maxSalary}
               <br />
             </Card.Text>
             <Card.Text>
@@ -69,96 +65,38 @@ const JobList = () => {
             </Card.Text>
             <Card.Text>
               <strong>Skills:</strong>{' '}
-              {[
-                'C',
-                'C++',
-                'C#',
-                'C',
-                'C++',
-                'C#',
-                'C',
-                'C++',
-                'C#',
-                'C',
-                'C++',
-                'C#',
-                'C',
-                'C++',
-                'C#',
-                'C',
-                'C++',
-                'C#',
-                'C',
-                'C++',
-                'C#',
-                'C',
-                'C++',
-                'C#',
-                'C',
-                'C++',
-                'C#',
-                'C',
-                'C++',
-                'C#',
-                'C',
-                'C++',
-                'C#',
-                'C',
-                'C++',
-                'C#',
-                'C',
-                'C++',
-                'C#',
-                'C',
-                'C++',
-                'C#',
-                'C',
-                'C++',
-                'C#',
-                'C',
-                'C++',
-                'C#',
-                'C',
-                'C++',
-                'C#',
-                'C',
-                'C++',
-                'C#',
-                'C',
-                'C++',
-                'C#',
-                'C',
-                'C++',
-                'C#',
-                'C',
-                'C++',
-                'C#',
-                'C',
-                'C++',
-                'C#',
-                'C',
-                'C++',
-                'C#',
-                'C',
-                'C++',
-                'C#',
-              ].map((type, index) => (
+              {job.skills.map((skill, index) => (
                 <Badge bg="dark" key={index} className="me-1">
-                  {type}
+                  {skill}
                 </Badge>
               ))}
             </Card.Text>
             <Card.Text>
-              <strong>Work Types:</strong>{' '}
-              {['Full-time', 'Contract'].map((type, index) => (
+              <strong>Industries:</strong>{' '}
+              {job.industries.split(',').map((industry, index) => (
                 <Badge bg="secondary" key={index} className="me-1">
-                  {type}
+                  {industry}
                 </Badge>
               ))}
             </Card.Text>
+            <Collapse in={openJobId === job.id}>
+              <div>
+                <Card.Text>
+                  <strong>Description:</strong> {job.description}
+                </Card.Text>
+                <Button>
+                  Apply
+                </Button>
+              </div>
+            </Collapse>
           </Card.Body>
           <Card.Footer>
-            <Button variant="primary">More Details</Button>
+            <Button
+              variant="outline-primary"
+              onClick={() => handleToggle(job.id)}
+            >
+              {openJobId === job.id ? 'Show less' : 'Show Description'}
+            </Button>
           </Card.Footer>
         </Card>
       ))}
