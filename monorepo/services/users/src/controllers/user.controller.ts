@@ -141,7 +141,7 @@ export async function changePassword(
 
     const user = result.data;
 
-    const isMatch = await bcrypt.compare(oldPassword, user?.password);
+    const isMatch = await bcrypt.compare(oldPassword, user?.password ?? '');
 
     if (!isMatch) {
       return {

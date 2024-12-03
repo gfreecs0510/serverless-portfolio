@@ -106,7 +106,7 @@ async function rateLimiter(ip: string): Promise<Response | void> {
 }
 
 const rateLimiterMiddleware = () => {
-  const before = async (request) => {
+  const before = async (request:any) => {
     await redisClient.connect();
     const ipAddress = request.event.requestContext.http.sourceIp;
     const response: Response | void = await rateLimiter(ipAddress);
