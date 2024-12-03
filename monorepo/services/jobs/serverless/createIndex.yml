@@ -1,0 +1,3 @@
+createIndexFunction:
+  handler: src/handlers/createIndex.handler
+  timeout: 30

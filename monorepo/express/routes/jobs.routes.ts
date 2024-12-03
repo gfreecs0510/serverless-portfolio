@@ -3,20 +3,20 @@ import {
   createIndex,
   createUpdateRecordIndex,
   search,
-} from '../../services/jobSearch/src/controllers/jobSearch.controller';
+} from '../../services/jobs/src/controllers/jobSearch.controller';
 import { factory } from '../../src/common/expressFactory.common';
 
-export const searchRoutes = express.Router();
+export const jobsRoutes = express.Router();
 
-searchRoutes.post('/createIndex', factory(null, createIndex));
-searchRoutes.post(
+jobsRoutes.post('/createIndex', factory(null, createIndex));
+jobsRoutes.post(
   '/createUpdateRecordIndex',
   factory((req: Request) => {
     return req.body;
   }, createUpdateRecordIndex),
 );
 
-searchRoutes.post(
+jobsRoutes.post(
   '/search',
   factory((req: Request) => {
     return req.body;

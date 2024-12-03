@@ -58,8 +58,12 @@ resources:
         VpcId: !Ref ServerlessVPC
         SecurityGroupIngress:
           - IpProtocol: 'tcp'
-            FromPort: ${env:REDIS_PORT, '6379'} # Using environment variable for port
-            ToPort: ${env:REDIS_PORT, '6379'} # Using environment variable for port
+            FromPort: ${env:REDIS_PORT, '6379'}
+            ToPort: ${env:REDIS_PORT, '6379'}
+            CidrIp: '10.0.0.0/16'
+          - IpProtocol: tcp
+            FromPort: ${env:ES_PORT, '443'}
+            ToPort: ${env:ES_PORT, '443'}
             CidrIp: '10.0.0.0/16'
 
     ServerlessRouteTable:
@@ -153,6 +157,37 @@ resources:
           ThrottlingRateLimit: 20
           ThrottlingBurstLimit: 30
 
+    SharedOpensearch:
+      Type: AWS::OpenSearchService::Domain
+      Properties:
+        DomainName: serverless-${lower(${sls:stage})}
+        EngineVersion: 'OpenSearch_2.3' # Use a supported version
+        ClusterConfig:
+          InstanceType: 't3.small.search' # Free-tier eligible
+          InstanceCount: 1
+          ZoneAwarenessEnabled: false # Single AZ
+        EBSOptions:
+          EBSEnabled: true
+          VolumeType: 'gp2'
+          VolumeSize: 10
+        NodeToNodeEncryptionOptions:
+          Enabled: true
+        EncryptionAtRestOptions:
+          Enabled: true
+        VPCOptions:
+          SubnetIds:
+            - !Ref PrivateSubnet1
+          SecurityGroupIds:
+            - !Ref ServerlessSecurityGroup
+        AccessPolicies:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: 'Allow'
+              Principal:
+                AWS: '*'
+              Action: 'es:*'
+              Resource: !Sub 'arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/serverless-${lower(${sls:stage})}/*'
+
   Outputs:
     SharedApiGatewayId:
       Description: 'API Gateway Id'
@@ -186,3 +221,13 @@ resources:
       Value: !Ref ServerlessVPC
       Export:
         Name: ${self:service}-VPCId
+
+    SharedOpensearchURL:
+      Value: !GetAtt SharedOpensearch.DomainEndpoint
+      Export:
+        Name: ${self:service}-SharedOpensearchURL
+
+    SharedOpensearchArn:
+      Value: !Ref SharedOpensearch
+      Export:
+        Name: ${self:service}-SharedOpensearchArn

@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
-import { searchRoutes } from './routes/search.routes';
+import { jobsRoutes } from './routes/jobs.routes';
 import { ElasticClient } from '../src/clients/elasticsearch.client';
 
 dotenv.config();
@@ -17,7 +17,7 @@ bootstrap()
     app.use(express.json());
     app.use(helmet());
     app.use(helmet.xssFilter());
-    app.use('/jobs', searchRoutes);
+    app.use('/jobs', jobsRoutes);
     app.listen(port, () => {
       console.log('Express app running in port: ', port);
     });

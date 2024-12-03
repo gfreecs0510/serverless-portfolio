@@ -1,0 +1,13 @@
+searchFunction:
+  handler: src/handlers/search.handler
+  timeout: 30
+  iamRoleStatementsName: searchRole
+  iamRoleStatements:
+    - Effect: Allow
+      Resource: ${param:SharedDynamoDBArn}
+      Action:
+        - dynamodb:GetItem
+  events:
+    - httpApi:
+        path: /jobs/search
+        method: POST

@@ -1,0 +1,13 @@
+createUpdateRecordIndexFunction:
+  handler: src/handlers/createUpdateRecordIndex.handler
+  timeout: 30
+  iamRoleStatementsName: createUpdateRecordIndexRole
+  iamRoleStatements:
+    - Effect: Allow
+      Resource: ${param:SharedDynamoDBArn}
+      Action:
+        - dynamodb:GetItem
+  events:
+    - httpApi:
+        path: /jobs/createUpdateRecordIndex
+        method: POST

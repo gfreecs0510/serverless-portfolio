@@ -21,12 +21,14 @@
     "electrodb": "^3.0.1",
     "jsonwebtoken": "^9.0.2",
     "middy": "^0.36.0",
+    "opensearch": "^0.0.3",
     "redis": "^4.7.0",
     "serverless-step-functions": "^3.21.1",
     "uuid": "^11.0.3"
   },
   "devDependencies": {
     "@elastic/elasticsearch": "^8.16.2",
+    "@opensearch-project/opensearch": "^2.13.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/elasticsearch": "^5.0.43",
     "@types/express": "^5.0.0",

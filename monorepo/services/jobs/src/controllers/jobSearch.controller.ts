@@ -19,12 +19,11 @@ import {
 
 export async function createIndex(): Promise<Response> {
   try {
-    // Check if index already exists
     const indexExists = await ElasticClient.getClient().indices.exists({
       index: JOBS_INDEX,
     });
 
-    if (indexExists) {
+    if (indexExists?.body) {
       console.log(`Index ${JOBS_INDEX} already exists.`);
       return {
         statusCode: 200,
@@ -165,6 +164,8 @@ export async function search(request: SearchResultRequest): Promise<Response> {
         },
       });
 
+    console.log("result", result)
+    //TODO: opensearch packe is not compatible with elasticsearch
     const cleanHits: Job[] = result.hits.hits.map((h) => {
       return {
         score: h._score as number,

@@ -12,3 +12,16 @@ services:
       SharedApiGatewayId: ${sharedInfra.SharedApiGatewayId}
       ServerlessSecurityGroupId: ${sharedInfra.ServerlessSecurityGroupId}
       PrivateSubnet1: ${sharedInfra.PrivateSubnet1}
+
+  jobs:
+    path: services/jobs
+    params:
+      SharedElasticCacheClusterAddress: ${sharedInfra.SharedElasticCacheClusterAddress}
+      SharedElasticCacheClusterPort: ${sharedInfra.SharedElasticCacheClusterPort}
+      SharedDynamoDBTableName: ${sharedInfra.SharedDynamoDBTableName}
+      SharedDynamoDBArn: ${sharedInfra.SharedDynamoDBArn}
+      SharedApiGatewayId: ${sharedInfra.SharedApiGatewayId}
+      ServerlessSecurityGroupId: ${sharedInfra.ServerlessSecurityGroupId}
+      PrivateSubnet1: ${sharedInfra.PrivateSubnet1}
+      SharedOpensearchURL: ${sharedInfra.SharedOpensearchURL}
+      SharedOpensearchArn: ${sharedInfra.SharedOpensearchArn}
