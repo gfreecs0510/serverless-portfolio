@@ -4,9 +4,9 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc -b",
-    "start": "node dist/index.js",
+    "start": "node dist/express/index.js",
     "format": "prettier --ignore-path .gitignore --write \"./**/*.+(js|ts|json|yml|yaml)\"",
-    "open-api-user-types": "npx openapi-typescript ./services/users/openapi.yaml -o ./services/users/types/openapi.type.ts",
+    "open-api-generate-types": "npx openapi-typescript ./services/jobSearch/openapi.yml -o ./services/jobSearch/types/openapi.type.ts",
     "deploy": "SLS_DEPLOY_REGION=us-east-1 serverless deploy"
   },
   "keywords": [],
@@ -17,6 +17,7 @@
     "@middy/core": "^5.5.1",
     "aws-sdk": "^2.1692.0",
     "bcryptjs": "^2.4.3",
+    "elasticsearch": "^16.7.3",
     "electrodb": "^3.0.1",
     "jsonwebtoken": "^9.0.2",
     "middy": "^0.36.0",
@@ -25,6 +26,13 @@
     "uuid": "^11.0.3"
   },
   "devDependencies": {
+    "@elastic/elasticsearch": "^8.16.2",
+    "@types/elasticsearch": "^5.0.43",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.1",
+    "dotenv": "^16.4.6",
+    "express": "^4.21.1",
+    "helmet": "^8.0.0",
     "openapi-typescript": "^7.4.3",
     "prettier": "^3.3.3",
     "serverless": "^4.4.10",

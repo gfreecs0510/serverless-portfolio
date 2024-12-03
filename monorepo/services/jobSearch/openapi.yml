@@ -1,0 +1,282 @@
+openapi: 3.0.0
+info:
+  title: Job Search API
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+    description: Local server
+
+components:
+  schemas:
+    Job:
+      type: object
+      properties:
+        role:
+          type: string
+          description: Job Role/Title
+        country:
+          type: string
+          description: which city/state/etc the job is located
+        location:
+          type: string
+          description: which country the job is located
+        preferences:
+          type: array
+          items:
+            type: string
+          description: Remote, Hybrid or On-site
+        workTypes:
+          type: array
+          items:
+            type: string
+          description: Full-time, Part-time, Contractual
+        skills:
+          type: array
+          items:
+            type: string
+          description: Relevant skills needed for the job
+        industries:
+          type: array
+          items:
+            type: string
+          description: Industries you will work with
+        description:
+          type: string
+          description: paragraph description about the job
+        minSalary:
+          type: integer
+          description: minimum salary (in USD, monthly, in thousands) 1 = 1K USD
+        maxSalary:
+          type: integer
+          description: minimum salary (in USD, monthly, in thousands) 1 = 1K USD
+        minExp:
+          type: integer
+          description: min years of experience required for the job
+        maxExp:
+          type: integer
+          description: maximum years of experience required for the job
+    CreateUpdateJobRecord:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Job'
+    SearchResultJobRecord:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/CreateUpdateJobRecord'
+        - properties:
+            score:
+              type: integer
+              description: Relevance score of the job listing
+            id:
+              type: string
+              description: ES record Id
+    Aggregates:
+      type: object
+      properties:
+        countriesAndLocations:
+          type: array
+          items:
+            type: object
+            properties:
+              key:
+                type: string
+                description: Country name
+              doc_count:
+                type: integer
+                description: Number of listings for this country
+              locations:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    key:
+                      type: string
+                      description: Location name
+                    doc_count:
+                      type: integer
+                      description: Number of listings for this location
+        preferences:
+          type: array
+          items:
+            type: object
+            properties:
+              key:
+                type: string
+                description: Remote, Hybrid or On-site
+              doc_count:
+                type: integer
+                description: Count of listings for this preference
+        workTypes:
+          type: array
+          items:
+            type: object
+            properties:
+              key:
+                type: string
+                description: Work type (e.g., Part-Time)
+              doc_count:
+                type: integer
+                description: Count of listings for this work type
+        salaries:
+          type: array
+          items:
+            type: object
+            properties:
+              key:
+                type: array
+                description: Salary range
+                items:
+                  type: object
+                  properties:
+                    from:
+                      type: number
+                      description: Lower limit of the salary range
+                    to``:
+                      type: number
+                      description: Upper limit of the salary range
+                    doc_count:
+                      type: integer
+                      description: Count of listings for this salary range
+              doc_count:
+                type: integer
+                description: Count of listings for this salary range
+        workExperiences:
+          type: array
+          items:
+            type: object
+            properties:
+              key:
+                type: array
+                description: Work experiences range
+                items:
+                  type: object
+                  properties:
+                    from:
+                      type: number
+                      description: Lower limit of the work experience range
+                    to:
+                      type: number
+                      description: Upper limit of the work experience range
+                    doc_count:
+                      type: integer
+                      description: Count of listings for this work experience range
+              doc_count:
+                type: integer
+                description: Count of listings for this work experience range
+        roles:
+          type: array
+          items:
+            type: object
+            properties:
+              key:
+                type: string
+                description: Job roles/title
+              doc_count:
+                type: integer
+                description: Count of listings for this job role/title
+        industries:
+          type: array
+          items:
+            type: object
+            properties:
+              key:
+                type: string
+                description: Industries
+              doc_count:
+                type: integer
+                description: Count of listings this industry
+paths:
+  /search:
+    post:
+      summary: Search for job listings with filters and aggregations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                role:
+                  type: string
+                country:
+                  type: string
+                location:
+                  type: string
+                workTypes:
+                  type: array
+                  items:
+                    type: string
+                preferences:
+                  type: array
+                  items:
+                    type: string
+                skills:
+                  type: array
+                  items:
+                    type: string
+                industries:
+                  type: array
+                  items:
+                    type: string
+                description:
+                  type: array
+                  items:
+                    type: string
+                minSalary:
+                  type: integer
+                maxSalary:
+                  type: integer
+                minExp:
+                  type: integer
+                maxExp:
+                  type: integer
+                size:
+                  type: integer
+                  description: Number of results to return
+                from:
+                  type: integer
+                  description: Starting point for pagination
+                aggsOnly:
+                  type: boolean
+              additionalProperties: false
+      responses:
+        '200':
+          description: A JSON object with search results and aggregations
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total:
+                    type: integer
+                    description: Total number of results
+                  size:
+                    type: integer
+                    description: Number of results returned in the response
+                  from:
+                    type: integer
+                    description: Starting index of the results
+                  result:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SearchResultJobRecord'
+                  aggs:
+                    $ref: '#/components/schemas/Aggregates'
+  /createIndex:
+    post:
+      summary: will create the index locally
+      responses:
+        '200':
+          description: Successfully created the index
+  /createUpdateRecordIndex:
+    post:
+      summary: will create or update an existing record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUpdateJobRecord'
+      responses:
+        '200':
+          description: Successfully updated/created record index
