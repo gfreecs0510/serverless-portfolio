@@ -58,44 +58,10 @@ export interface paths {
               size?: number;
               /** @description Starting index of the results */
               from?: number;
-              result?: components['schemas']['Record'][];
-              aggs?: components['schemas']['Aggregates'];
+              result?: components['schemas']['SearchResultJobRecord'][];
+              filters?: components['schemas']['Aggregates'];
             };
           };
-        };
-      };
-    };
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  '/createIndex': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** will create the index locally */
-    post: {
-      parameters: {
-        query?: never;
-        header?: never;
-        path?: never;
-        cookie?: never;
-      };
-      requestBody?: never;
-      responses: {
-        /** @description Successfully created the index */
-        200: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content?: never;
         };
       };
     };
@@ -124,7 +90,7 @@ export interface paths {
       };
       requestBody: {
         content: {
-          'application/json': components['schemas']['Record'];
+          'application/json': components['schemas']['CreateUpdateJobRecord'];
         };
       };
       responses: {
@@ -147,18 +113,22 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
-    Record: {
-      /** @description Relevance score of the job listing */
-      score?: number;
+    Job: {
       /** @description Job Role/Title */
       role?: string;
+      /** @description Name of the company */
+      company?: string;
       /** @description which city/state/etc the job is located */
       country?: string;
       /** @description which country the job is located */
       location?: string;
+      /** @description Remote, Hybrid or On-site */
       preferences?: string[];
+      /** @description Full-time, Part-time, Contractual */
       workTypes?: string[];
+      /** @description Relevant skills needed for the job */
       skills?: string[];
+      /** @description Industries you will work with */
       industries?: string[];
       /** @description paragraph description about the job */
       description?: string;
@@ -170,6 +140,13 @@ export interface components {
       minExp?: number;
       /** @description maximum years of experience required for the job */
       maxExp?: number;
+    };
+    CreateUpdateJobRecord: components['schemas']['Job'];
+    SearchResultJobRecord: components['schemas']['CreateUpdateJobRecord'] & {
+      /** @description Relevance score of the job listing */
+      score?: number;
+      /** @description ES record Id */
+      id?: string;
     };
     Aggregates: {
       countriesAndLocations?: {
@@ -184,7 +161,7 @@ export interface components {
           doc_count?: number;
         }[];
       }[];
-      preference?: {
+      preferences?: {
         /** @description Remote, Hybrid or On-site */
         key?: string;
         /** @description Count of listings for this preference */
@@ -200,32 +177,38 @@ export interface components {
         /** @description Salary range */
         key?: {
           /** @description Lower limit of the salary range */
-          min?: number;
+          from?: number;
           /** @description Upper limit of the salary range */
-          max?: number;
+          'to``'?: number;
           /** @description Count of listings for this salary range */
           doc_count?: number;
-        };
+        }[];
         /** @description Count of listings for this salary range */
         doc_count?: number;
       }[];
       workExperiences?: {
-        /** @description Work experience range */
+        /** @description Work experiences range */
         key?: {
-          /** @description Lower limit of the salary range */
-          min?: number;
-          /** @description Upper limit of the salary range */
-          max?: number;
-          /** @description Count of listings for this salary range */
+          /** @description Lower limit of the work experience range */
+          from?: number;
+          /** @description Upper limit of the work experience range */
+          to?: number;
+          /** @description Count of listings for this work experience range */
           doc_count?: number;
-        };
-        /** @description Count of listings for this salary range */
+        }[];
+        /** @description Count of listings for this work experience range */
         doc_count?: number;
       }[];
       roles?: {
         /** @description Job roles/title */
         key?: string;
         /** @description Count of listings for this job role/title */
+        doc_count?: number;
+      }[];
+      industries?: {
+        /** @description Industries */
+        key?: string;
+        /** @description Count of listings this industry */
         doc_count?: number;
       }[];
     };

@@ -3,7 +3,7 @@ import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from 'aws-lambda';
 import { register } from '../controllers/user.controller';
 import { UserRequest } from '../types/user.type';
 import { generateResponse } from '../../../../src/common/response.common';
-import { rateLimiterMiddleware } from '../middlewares/rateLimiter.middleware';
+import { rateLimiterMiddleware } from '../../../../src/middlewares/rateLimiter.middleware';
 import { paths } from '../types/openapi.type';
 
 type Response = paths['/users/register']['post']['responses']['201'];

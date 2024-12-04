@@ -1,6 +1,6 @@
-import { redisClient } from '../../../../src/clients/redis.client';
-import { Response } from '../../../../src/common/types.common';
-import { generateResponse } from '../../../../src/common/response.common';
+import { redisClient } from '../clients/redis.client';
+import { Response } from '../common/types.common';
+import { generateResponse } from '../common/response.common';
 
 const MAX_REQUESTS_PER_MINUTE = 20;
 const MAX_REQUESTS_PER_HOUR = 200;

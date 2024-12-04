@@ -2,7 +2,7 @@ import middy from '@middy/core';
 import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from 'aws-lambda';
 import { allowed } from '../controllers/user.controller';
 import { generateResponse } from '../../../../src/common/response.common';
-import { rateLimiterMiddleware } from '../middlewares/rateLimiter.middleware';
+import { rateLimiterMiddleware } from '../../../../src/middlewares/rateLimiter.middleware';
 import { paths } from '../types/openapi.type';
 
 type Response = paths['/users/noTokenAccess']['post']['responses']['200'];

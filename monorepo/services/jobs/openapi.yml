@@ -14,6 +14,9 @@ components:
         role:
           type: string
           description: Job Role/Title
+        company:
+          type: string
+          description: Name of the company
         country:
           type: string
           description: which city/state/etc the job is located
@@ -260,14 +263,8 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/SearchResultJobRecord'
-                  aggs:
+                  filters:
                     $ref: '#/components/schemas/Aggregates'
-  /createIndex:
-    post:
-      summary: will create the index locally
-      responses:
-        '200':
-          description: Successfully created the index
   /createUpdateRecordIndex:
     post:
       summary: will create or update an existing record

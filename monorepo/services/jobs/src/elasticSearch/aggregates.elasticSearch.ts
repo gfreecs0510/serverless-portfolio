@@ -1,4 +1,4 @@
-import { estypes } from '@elastic/elasticsearch';
+import { AggregationsAggregate } from '@opensearch-project/opensearch/api/types';
 
 export function getAggregates() {
   const countriesAndLocations = {
@@ -74,7 +74,7 @@ export function getAggregates() {
 
 //TODO: this needs to be cleanup, some sort of helper function
 export function transformAggregateResult(
-  aggregations: Record<string, estypes.AggregationsAggregate>,
+  aggregations: Record<string, AggregationsAggregate>,
 ) {
   const countriesAndLocations = [
     (aggregations['countriesAndLocations'] as any)?.buckets.map((c: any) => {

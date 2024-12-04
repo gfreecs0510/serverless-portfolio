@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { Response as ResponseType } from './types.common';
+import { Response as ResponseType } from '../src/common/types.common';
 
 type Controller = (...props: any[]) => Promise<ResponseType>;
 type ExpressRequestTransformer = (req: Request) => any;

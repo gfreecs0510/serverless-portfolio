@@ -3,7 +3,7 @@ import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from 'aws-lambda';
 import { changePassword } from '../controllers/user.controller';
 import { ChangePasswordInput } from '../types/user.type';
 import { generateResponse } from '../../../../src/common/response.common';
-import { rateLimiterMiddleware } from '../middlewares/rateLimiter.middleware';
+import { rateLimiterMiddleware } from '../../../../src/middlewares/rateLimiter.middleware';
 import { paths } from '../types/openapi.type';
 import { verifyTokenMiddleware } from '../middlewares/verifyToken.middleware';
 

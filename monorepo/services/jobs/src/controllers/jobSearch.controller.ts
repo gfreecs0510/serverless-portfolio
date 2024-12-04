@@ -1,12 +1,5 @@
 import { Response } from '../../../../src/common/types.common';
-import { Job, SearchResultRequest } from '../types/jobSearch.type';
-import { estypes } from '@elastic/elasticsearch';
-import {
-  terms,
-  term,
-  match,
-  range,
-} from '../elasticSearch/queries.elasticSearch';
+import { Job, SearchResultRequest, SearchResultResponse } from '../types/jobs';
 import {
   JOBS_INDEX,
   ElasticClient,
@@ -16,6 +9,17 @@ import {
   getAggregates,
   transformAggregateResult,
 } from '../elasticSearch/aggregates.elasticSearch';
+import {
+  QueryDslQueryContainer,
+  AggregationsAggregate,
+  SearchHit,
+} from '@opensearch-project/opensearch/api/types';
+import { ApiResponse } from '@opensearch-project/opensearch';
+
+import {
+  getFilterQuery,
+  getShouldMatch,
+} from '../elasticSearch/queries.elasticSearch';
 
 export async function createIndex(): Promise<Response> {
   try {
@@ -33,12 +37,12 @@ export async function createIndex(): Promise<Response> {
       };
     }
 
-    // Create the index with mappings
     const response = await ElasticClient.getClient().indices.create({
       index: JOBS_INDEX,
       body: {
         mappings: {
           properties: {
+            company: { type: 'keyword' },
             country: { type: 'keyword' },
             location: { type: 'keyword' },
             preferences: { type: 'keyword' },
@@ -108,43 +112,17 @@ export async function createUpdateRecordIndex(job: Job): Promise<Response> {
 
 export async function search(request: SearchResultRequest): Promise<Response> {
   try {
-    const {
-      role = '',
-      country = '',
-      location = '',
-      workTypes = [],
-      preferences = [],
-      skills = [],
-      industries = [],
-      description = [],
-      minSalary,
-      maxSalary,
-      minExp,
-      maxExp,
-      size = 10,
-      from = 0,
-      aggsOnly = false,
-      debug = false,
-    } = request;
+    const { size = 10, from = 0, aggsOnly = false, debug = false } = request;
 
-    let filter: estypes.QueryDslQueryContainer[] = [];
-    let query: estypes.QueryDslQueryContainer = {};
-
-    match(filter, 'role', role);
-    term(filter, 'country', country);
-    term(filter, 'location', location);
-    terms(filter, 'workTypes', workTypes);
-    terms(filter, 'preferences', preferences);
-    terms(filter, 'skills', skills);
-    terms(filter, 'industries', industries);
-    terms(filter, 'description', description);
-    range(filter, 'minExp', 'maxExp', minExp, maxExp);
-    range(filter, 'minSalary', 'maxSalary', minSalary, maxSalary);
+    const filter: QueryDslQueryContainer[] = getFilterQuery(request);
+    const shouldMatch = getShouldMatch(request);
+    let query: QueryDslQueryContainer = {};
 
     if (filter.length > 0) {
       query = {
         bool: {
           filter,
+          must: shouldMatch,
         },
       };
     } else {
@@ -153,20 +131,31 @@ export async function search(request: SearchResultRequest): Promise<Response> {
       };
     }
 
-    const result: estypes.SearchResponse =
-      await ElasticClient.getClient().search({
-        index: JOBS_INDEX,
-        body: {
-          query,
-          size,
-          from,
-          aggs: getAggregates(),
-        },
-      });
+    console.log('filters and query', {
+      query,
+      filter,
+    });
 
-    console.log("result", result)
-    //TODO: opensearch packe is not compatible with elasticsearch
-    const cleanHits: Job[] = result.hits.hits.map((h) => {
+    const result: ApiResponse = await ElasticClient.getClient().search({
+      index: JOBS_INDEX,
+      body: {
+        query,
+        size,
+        from,
+        aggs: getAggregates(),
+      },
+    });
+
+    if (result.statusCode !== 200) {
+      return {
+        statusCode: 400,
+        body: {
+          message: 'bad request',
+        },
+      };
+    }
+
+    const cleanHits: Job[] = result.body.hits.hits.map((h: SearchHit<Job>) => {
       return {
         score: h._score as number,
         id: h._id as string,
@@ -175,19 +164,27 @@ export async function search(request: SearchResultRequest): Promise<Response> {
     });
 
     const cleanAggregates = transformAggregateResult(
-      result.aggregations as Record<string, estypes.AggregationsAggregate>,
+      result.body.aggregations as Record<string, AggregationsAggregate>,
     );
+
+    //worktypes is the best to count in this case
+    const total = cleanAggregates.workTypes.reduce((total, workType) => {
+      total += workType.doc_count;
+      return total;
+    }, 0);
+
+    const body: SearchResultResponse = {
+      total,
+      size,
+      from,
+      result: cleanHits,
+      filters: cleanAggregates,
+      ...(debug ? { query } : {}),
+    };
 
     return {
       statusCode: 200,
-      body: {
-        total: 100,
-        size,
-        from,
-        result: cleanHits,
-        aggs: cleanAggregates,
-        ...(debug ? { query } : {}),
-      },
+      body,
     };
   } catch (err) {
     console.log('search error', err);

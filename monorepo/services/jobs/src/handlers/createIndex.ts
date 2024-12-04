@@ -1,9 +1,9 @@
 import middy from '@middy/core';
 import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from 'aws-lambda';
 import { generateResponse } from '../../../../src/common/response.common';
-import { rateLimiterMiddleware } from '../../../users/src/middlewares/rateLimiter.middleware';
+import { rateLimiterMiddleware } from '../../../../src/middlewares/rateLimiter.middleware';
 import { createIndex } from '../controllers/jobSearch.controller';
-import { SearchResultRequest } from '../types/jobSearch.type';
+import { SearchResultRequest } from '../types/jobs';
 import { elasticsearchMiddleware } from '../../../../src/middlewares/elasticsearch.middleware';
 
 const lambdaHandler = async (
