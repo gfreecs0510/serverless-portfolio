@@ -6,4 +6,5 @@ export type SearchResultRequest =
   };
 export type SearchResultResponse =
   paths['/search']['post']['responses']['200']['content']['application/json'];
-export type Job = components['schemas']['Job'];
+export type Job = components['schemas']['SearchResultJobRecord'];
+export type Aggregates = components['schemas']['Aggregates'];

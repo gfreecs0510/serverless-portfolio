@@ -1,4 +1,5 @@
 import { AggregationsAggregate } from '@opensearch-project/opensearch/api/types';
+import { Aggregates } from '../types/jobs';
 
 export function getAggregates() {
   const countriesAndLocations = {
@@ -62,6 +63,13 @@ export function getAggregates() {
     },
   };
 
+  const skills = {
+    terms: {
+      field: 'skills',
+      size: 1000,
+    },
+  };
+
   return {
     countriesAndLocations,
     preferences,
@@ -69,27 +77,30 @@ export function getAggregates() {
     industries,
     salaries,
     workExperiences,
+    skills,
   };
 }
 
 //TODO: this needs to be cleanup, some sort of helper function
 export function transformAggregateResult(
   aggregations: Record<string, AggregationsAggregate>,
-) {
-  const countriesAndLocations = [
-    (aggregations['countriesAndLocations'] as any)?.buckets.map((c: any) => {
-      return {
-        ...c,
-        locations: c.locations.buckets,
-      };
-    }),
-  ];
+): Aggregates {
+  const countriesAndLocations = (
+    aggregations['countriesAndLocations'] as any
+  ).buckets.map((c: any) => {
+    return {
+      ...c,
+      locations: c.locations.buckets,
+    };
+  });
 
-  const preferences = [...(aggregations['preferences'] as any)?.buckets];
+  const skills = [...(aggregations['skills'] as any).buckets];
 
-  const workTypes = [...(aggregations['workTypes'] as any)?.buckets];
+  const preferences = [...(aggregations['preferences'] as any).buckets];
 
-  const industries = [...(aggregations['industries'] as any)?.buckets];
+  const workTypes = [...(aggregations['workTypes'] as any).buckets];
+
+  const industries = [...(aggregations['industries'] as any).buckets];
 
   const workExperiences = [
     ...(aggregations['workExperiences'] as any)?.buckets,
@@ -103,6 +114,7 @@ export function transformAggregateResult(
     industries,
     workExperiences,
     salaries,
+    skills,
   };
 
   return cleanAggregates;

@@ -20,7 +20,6 @@ const TagInput: FC<TagInputProps> = (props: TagInputProps) => {
     tags = [],
     setTags = () => {},
   } = props;
-  console.log('first', options);
   const [enabled, setEnabled] = useState<boolean>(true);
   const [value, setValue] = useState<string>('');
 
@@ -41,8 +40,6 @@ const TagInput: FC<TagInputProps> = (props: TagInputProps) => {
   };
 
   useEffect(() => {
-    console.log('second', options);
-
     if (filteredOptions.length > 0) {
       setEnabled(true);
     } else {

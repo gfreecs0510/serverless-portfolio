@@ -10,28 +10,29 @@ function App() {
   return (
     <SearchProvider>
       <Router>
-        <div className="text-center">
-          <Header />
-        </div>
-        <div
-          className="App d-flex flex-column align-items-center justify-content-center text-left bg-white"
-          style={{
-            minHeight: '70vh',
-            color: 'black',
-          }}
-        >
-          <Routes>
-            <Route path="/" element={<Me />} />
-            <Route path="/portfolio" element={<Portfolio />} />
-            <Route
-              path="/character-reference"
-              element={<CharacterReference />}
-            />
-            <Route path="*" element={<Me />} />
-          </Routes>
-        </div>
-        <div className="footer">
-          <Footer />
+        <div className="d-flex flex-column min-vh-100">
+          <header className="text-center">
+            <Header />
+          </header>
+          <main
+            className="flex-grow-1 d-flex flex-column align-items-center justify-content-center bg-white text-left"
+            style={{
+              color: 'black',
+            }}
+          >
+            <Routes>
+              <Route path="/" element={<Me />} />
+              <Route path="/portfolio" element={<Portfolio />} />
+              <Route
+                path="/character-reference"
+                element={<CharacterReference />}
+              />
+              <Route path="*" element={<Me />} />
+            </Routes>
+          </main>
+          <footer className="mt-auto">
+            <Footer />
+          </footer>
         </div>
       </Router>
     </SearchProvider>

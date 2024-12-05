@@ -1,25 +1,9 @@
 import { Container, Card, Badge, Button, Collapse } from 'react-bootstrap';
 import { useState } from 'react';
+import { SearchResultJobRecord } from '../../types/types';
 
 type JobListProps = {
-  jobs: Job[];
-};
-
-type Job = {
-  id: string;
-  role: string;
-  company: string;
-  country: string;
-  location: string;
-  minExp: number;
-  maxExp: number;
-  workTypes: string[];
-  preferences: string[];
-  skills: string[];
-  industries: string;
-  minSalary: number;
-  maxSalary: number;
-  description: string;
+  jobs: SearchResultJobRecord[];
 };
 
 const JobList = (props: JobListProps) => {
@@ -30,7 +14,7 @@ const JobList = (props: JobListProps) => {
   };
 
   return (
-    <Container fluid="md" className="mt-4 mb-4">
+    <Container fluid="md" className="mt-4">
       {props.jobs.map((job) => (
         <Card className="mb-4 shadow-sm" key={job.id}>
           <Badge
@@ -38,7 +22,7 @@ const JobList = (props: JobListProps) => {
             className="position-absolute top-0 end-0 m-2"
             style={{ fontSize: '1rem', padding: '0.5em 1em' }}
           >
-            10.0
+            Score: {job.score}
           </Badge>
 
           <Card.Body>
@@ -73,7 +57,7 @@ const JobList = (props: JobListProps) => {
             </Card.Text>
             <Card.Text>
               <strong>Industries:</strong>{' '}
-              {job.industries.split(',').map((industry, index) => (
+              {job.industries.map((industry, index) => (
                 <Badge bg="secondary" key={index} className="me-1">
                   {industry}
                 </Badge>
@@ -84,9 +68,7 @@ const JobList = (props: JobListProps) => {
                 <Card.Text>
                   <strong>Description:</strong> {job.description}
                 </Card.Text>
-                <Button>
-                  Apply
-                </Button>
+                <Button>Apply</Button>
               </div>
             </Collapse>
           </Card.Body>

@@ -10,6 +10,20 @@ components:
   schemas:
     Job:
       type: object
+      required:
+        - role
+        - company
+        - country
+        - location
+        - preferences
+        - workTypes
+        - skills
+        - industries
+        - description
+        - minSalary
+        - maxSalary
+        - minExp
+        - maxExp
       properties:
         role:
           type: string
@@ -64,6 +78,9 @@ components:
         - $ref: '#/components/schemas/Job'
     SearchResultJobRecord:
       type: object
+      required:
+        - score
+        - id
       allOf:
         - $ref: '#/components/schemas/CreateUpdateJobRecord'
         - properties:
@@ -75,11 +92,23 @@ components:
               description: ES record Id
     Aggregates:
       type: object
+      required:
+        - countriesAndLocations
+        - preferences
+        - workTypes
+        - salaries
+        - workExperiences
+        - industries
+        - skills
       properties:
         countriesAndLocations:
           type: array
           items:
             type: object
+            required:
+              - key
+              - doc_count
+              - locations
             properties:
               key:
                 type: string
@@ -91,6 +120,9 @@ components:
                 type: array
                 items:
                   type: object
+                  required:
+                    - key
+                    - doc_count
                   properties:
                     key:
                       type: string
@@ -102,6 +134,9 @@ components:
           type: array
           items:
             type: object
+            required:
+              - key
+              - doc_count
             properties:
               key:
                 type: string
@@ -113,6 +148,9 @@ components:
           type: array
           items:
             type: object
+            required:
+              - key
+              - doc_count
             properties:
               key:
                 type: string
@@ -124,22 +162,21 @@ components:
           type: array
           items:
             type: object
+            required:
+              - key
+              - doc_count
+              - from
+              - to
             properties:
               key:
-                type: array
-                description: Salary range
-                items:
-                  type: object
-                  properties:
-                    from:
-                      type: number
-                      description: Lower limit of the salary range
-                    to``:
-                      type: number
-                      description: Upper limit of the salary range
-                    doc_count:
-                      type: integer
-                      description: Count of listings for this salary range
+                type: string
+                description: 'Salary range'
+              from:
+                type: number
+                description: Lower limit of the salary range
+              to:
+                type: number
+                description: Upper limit of the salary range
               doc_count:
                 type: integer
                 description: Count of listings for this salary range
@@ -147,40 +184,31 @@ components:
           type: array
           items:
             type: object
-            properties:
-              key:
-                type: array
-                description: Work experiences range
-                items:
-                  type: object
-                  properties:
-                    from:
-                      type: number
-                      description: Lower limit of the work experience range
-                    to:
-                      type: number
-                      description: Upper limit of the work experience range
-                    doc_count:
-                      type: integer
-                      description: Count of listings for this work experience range
-              doc_count:
-                type: integer
-                description: Count of listings for this work experience range
-        roles:
-          type: array
-          items:
-            type: object
+            required:
+              - key
+              - doc_count
+              - from
+              - to
             properties:
               key:
                 type: string
-                description: Job roles/title
+                description: 'work experience range'
+              from:
+                type: number
+                description: Lower limit of the work experience range
+              to:
+                type: number
+                description: Upper limit of the work experience range
               doc_count:
                 type: integer
-                description: Count of listings for this job role/title
+                description: Count of listings for this work experience range
         industries:
           type: array
           items:
             type: object
+            required:
+              - key
+              - doc_count
             properties:
               key:
                 type: string
@@ -188,6 +216,20 @@ components:
               doc_count:
                 type: integer
                 description: Count of listings this industry
+        skills:
+          type: array
+          items:
+            type: object
+            required:
+              - key
+              - doc_count
+            properties:
+              key:
+                type: string
+                description: Skill
+              doc_count:
+                type: integer
+                description: Count of listings this Skill
 paths:
   /search:
     post:
@@ -239,8 +281,6 @@ paths:
                 from:
                   type: integer
                   description: Starting point for pagination
-                aggsOnly:
-                  type: boolean
               additionalProperties: false
       responses:
         '200':
@@ -249,6 +289,12 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                  - total
+                  - size
+                  - from
+                  - result
+                  - filters
                 properties:
                   total:
                     type: integer

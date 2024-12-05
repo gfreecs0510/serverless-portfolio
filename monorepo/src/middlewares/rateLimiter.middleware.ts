@@ -3,9 +3,9 @@ import { Response } from '../common/types.common';
 import { generateResponse } from '../common/response.common';
 
 const MAX_REQUESTS_PER_MINUTE = 20;
-const MAX_REQUESTS_PER_HOUR = 200;
-const MAX_REQUESTS_PER_DAY = 400;
-const DELAY_TIME = 24000;
+const MAX_REQUESTS_PER_HOUR = 1000;
+const MAX_REQUESTS_PER_DAY = 1200;
+const DELAY_TIME = 26000;
 
 function timeout() {
   return new Promise((resolve) => {

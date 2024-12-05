@@ -89,7 +89,6 @@ const AutoCompleteTextField: FC<AutoCompleteTextFieldProps> = (
         className="typeahead-form-group"
         style={{ position: 'relative' }}
       >
-        {' '}
         <Form.Control
           type="text"
           autoComplete="off"

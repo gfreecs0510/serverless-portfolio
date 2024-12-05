@@ -20,7 +20,7 @@ rad.json
 *.flf
 #Test results file
 TestResults.xml
-
+**/.DS_Store
 **/dist/
 **/.serverless/
 **/node_modules/

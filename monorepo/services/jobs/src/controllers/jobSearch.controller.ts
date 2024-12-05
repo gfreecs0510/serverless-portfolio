@@ -112,7 +112,7 @@ export async function createUpdateRecordIndex(job: Job): Promise<Response> {
 
 export async function search(request: SearchResultRequest): Promise<Response> {
   try {
-    const { size = 10, from = 0, aggsOnly = false, debug = false } = request;
+    const { size = 0, from = 0, debug = false } = request;
 
     const filter: QueryDslQueryContainer[] = getFilterQuery(request);
     const shouldMatch = getShouldMatch(request);
@@ -130,11 +130,6 @@ export async function search(request: SearchResultRequest): Promise<Response> {
         match_all: {},
       };
     }
-
-    console.log('filters and query', {
-      query,
-      filter,
-    });
 
     const result: ApiResponse = await ElasticClient.getClient().search({
       index: JOBS_INDEX,

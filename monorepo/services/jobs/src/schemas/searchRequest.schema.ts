@@ -96,12 +96,6 @@ export default {
       minimum: 0,
       description: 'Starting point for pagination',
     },
-    aggsOnly: {
-      type: 'boolean',
-    },
-    default: {
-      type: 'boolean',
-    },
   },
   additionalProperties: false,
   allOf: [

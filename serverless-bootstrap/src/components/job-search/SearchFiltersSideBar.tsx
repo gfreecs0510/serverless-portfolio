@@ -8,28 +8,19 @@ import CheckBoxes from '../custom/CheckBoxes';
 import RadioBoxes from '../custom/RadioBoxes';
 import AutoCompleteTextField from '../custom/AutoCompleteTextField';
 import { useSearchContext } from '../../context/SearchContext';
-import { Spinner } from 'react-bootstrap';
-import axios from 'axios';
+import { Form, Spinner } from 'react-bootstrap';
+import { SearchJobRequestType } from '../../types/types';
 
 type SearchFiltersSideBarProps = {
   loading: boolean;
   setLoading: Dispatch<SetStateAction<boolean>>;
+  handleJobSearch: (requestBody: SearchJobRequestType) => void;
 };
 
 function SearchFiltersSideBar(props: SearchFiltersSideBarProps) {
-  const { loading, setLoading } = props;
+  const { loading, handleJobSearch } = props;
   const [show, setShow] = useState(true);
-  const {
-    countriesAndLocationsObject,
-    workExperiencesObject,
-    salaryObject,
-    workTypeList,
-    preferencesList,
-    skillsList,
-    industriesList,
-    roles,
-    setJobs,
-  } = useSearchContext();
+  const { aggregates, size } = useSearchContext();
 
   const [role, setRole] = useState<string>('');
   const [country, setCountry] = useState<string>('');
@@ -40,7 +31,20 @@ function SearchFiltersSideBar(props: SearchFiltersSideBarProps) {
   const [skills, setSkills] = useState<string[]>([]);
   const [industries, setIndustries] = useState<string[]>([]);
   const [salary, setSalary] = useState<string>('');
-  const locations = countriesAndLocationsObject[country] ?? [];
+  const countries = getCountries();
+  const locations = getLocation();
+
+  function getCountries() {
+    return aggregates.countriesAndLocations.map((c) => c.key);
+  }
+
+  function getLocation() {
+    if (country)
+      return aggregates.countriesAndLocations
+        .find((c) => c.key === country)!
+        .locations.map((l) => l.key);
+    else return [];
+  }
 
   useEffect(() => {
     setLocation('');
@@ -49,39 +53,47 @@ function SearchFiltersSideBar(props: SearchFiltersSideBarProps) {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  const fetchJobSearchResults = async () => {
-    const body = {
-      country,
-      location,
-      role,
-      preferences,
-      skills,
-      industries,
-      description: [],
-      minSalary: 0,
-      maxSalary: 0,
-      minExp: 0,
-      maxExp: 0,
-    };
-
-    const response = await axios.post(
-      'http://localhost:3000/jobs/search',
-      body,
-      {
-        headers: { Accept: 'application/json' },
+  const fetchJobSearchResults = () => {
+    try {
+      const body: SearchJobRequestType = {
+        preferences,
+        skills,
+        industries,
+        description: [],
+        size,
+      };
+      if (country) {
+        body.country = country;
       }
-    );
 
-    setJobs(response.data);
+      if (location) {
+        body.location = location;
+      }
+
+      if (role) {
+        body.role = role;
+      }
+
+      if (salary !== '') {
+        const salaryObject = aggregates.salaries.find((i) => i.key === salary);
+        body.minSalary = salaryObject?.from ?? 0;
+        body.maxSalary = salaryObject?.to ?? 0;
+      }
+
+      if (workExperience != '') {
+        const workExpObject = aggregates.workExperiences.find(
+          (i) => i.key === workExperience
+        );
+        body.minExp = workExpObject?.from ?? 0;
+        body.maxSalary = workExpObject?.to ?? 0;
+      }
+      handleJobSearch(body);
+    } catch (error) {}
   };
 
   const handleSubmit = () => {
-    setLoading(true);
     handleClose();
-
-    fetchJobSearchResults().then(() => {
-      setLoading(false);
-    });
+    fetchJobSearchResults();
   };
 
   const renderRoles = () => {
@@ -89,11 +101,13 @@ function SearchFiltersSideBar(props: SearchFiltersSideBarProps) {
       <Accordion.Item eventKey="role">
         <Accordion.Header>Role: {role}</Accordion.Header>
         <Accordion.Body>
-          <AutoCompleteTextField
+          <Form.Control
             id="role"
-            options={roles}
+            type="text"
+            autoComplete="off"
+            onChange={(e) => setRole(e.target.value)}
             value={role}
-            setValue={setRole}
+            placeholder="Enter role"
           />
         </Accordion.Body>
       </Accordion.Item>
@@ -107,7 +121,7 @@ function SearchFiltersSideBar(props: SearchFiltersSideBarProps) {
         <Accordion.Body>
           <AutoCompleteTextField
             id="country"
-            options={Object.keys(countriesAndLocationsObject)}
+            options={countries}
             value={country}
             setValue={setCountry}
           />
@@ -143,7 +157,7 @@ function SearchFiltersSideBar(props: SearchFiltersSideBarProps) {
         <Accordion.Body>
           <RadioBoxes
             id="workExperiences"
-            options={Object.keys(workExperiencesObject)}
+            options={aggregates.workExperiences.map((c) => c.key)}
             selectedValue={workExperience}
             setSelectedValue={setWorkExperience}
           />
@@ -159,7 +173,7 @@ function SearchFiltersSideBar(props: SearchFiltersSideBarProps) {
         <Accordion.Body>
           <CheckBoxes
             id="workTypeList"
-            options={workTypeList}
+            options={aggregates.workTypes.map((c) => c.key)}
             checkedItems={workTypes}
             setCheckedItems={setWorkTypes}
           ></CheckBoxes>
@@ -177,7 +191,7 @@ function SearchFiltersSideBar(props: SearchFiltersSideBarProps) {
         <Accordion.Body>
           <CheckBoxes
             id="preferences"
-            options={preferencesList}
+            options={aggregates.preferences.map((c) => c.key)}
             checkedItems={preferences}
             setCheckedItems={setPreferences}
           ></CheckBoxes>
@@ -193,7 +207,7 @@ function SearchFiltersSideBar(props: SearchFiltersSideBarProps) {
         <Accordion.Body>
           <TagInput
             id="skills"
-            options={skillsList}
+            options={aggregates.skills.map((s) => s.key)}
             tags={skills}
             setTags={setSkills}
           />
@@ -209,7 +223,7 @@ function SearchFiltersSideBar(props: SearchFiltersSideBarProps) {
         <Accordion.Body>
           <TagInput
             id="industries"
-            options={industriesList}
+            options={aggregates.industries.map((s) => s.key)}
             tags={industries}
             setTags={setIndustries}
           />
@@ -225,13 +239,55 @@ function SearchFiltersSideBar(props: SearchFiltersSideBarProps) {
         <Accordion.Body>
           <RadioBoxes
             id="salaries"
-            options={Object.keys(salaryObject)}
+            options={aggregates.salaries.map((s) => s.key)}
             selectedValue={salary}
             setSelectedValue={setSalary}
           />
         </Accordion.Body>
       </Accordion.Item>
     );
+  };
+
+  const renderFilters = () => {
+    try {
+      return (
+        <>
+          <Accordion
+            alwaysOpen
+            defaultActiveKey={[
+              'role',
+              'country',
+              'location',
+              'work_exp',
+              'skill',
+              'work_type',
+              'preferencesList',
+              'industry',
+              'salary',
+            ]}
+          >
+            {renderRoles()}
+            {renderCountries()}
+            {renderLocations()}
+            {renderWorkExperiences()}
+            {renderSalary()}
+            {renderSkills()}
+            {renderWorkTypes()}
+            {renderPreferences()}
+            {renderIndustries()}
+          </Accordion>
+          <Button
+            type="submit"
+            className="btn btn-primary mt-4 allign-center"
+            onClick={handleSubmit}
+          >
+            Submit
+          </Button>
+        </>
+      );
+    } catch (err) {
+      console.log(err);
+    }
   };
   return (
     <>
@@ -265,37 +321,7 @@ function SearchFiltersSideBar(props: SearchFiltersSideBarProps) {
               <Spinner animation="border" role="status" />
             </div>
           )}
-          <Accordion
-            alwaysOpen
-            defaultActiveKey={[
-              'role',
-              'country',
-              'location',
-              'work_exp',
-              'skill',
-              'work_type',
-              'preferencesList',
-              'industry',
-              'salary',
-            ]}
-          >
-            {renderRoles()}
-            {renderCountries()}
-            {renderLocations()}
-            {renderWorkExperiences()}
-            {renderSalary()}
-            {renderSkills()}
-            {renderWorkTypes()}
-            {renderPreferences()}
-            {renderIndustries()}
-          </Accordion>
-          <Button
-            type="submit"
-            className="btn btn-primary mt-4 allign-center"
-            onClick={handleSubmit}
-          >
-            Submit
-          </Button>
+          {renderFilters()}
         </Offcanvas.Body>
       </Offcanvas>
     </>

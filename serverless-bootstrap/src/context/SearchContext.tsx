@@ -1,90 +1,78 @@
 import React, { createContext, ReactNode, useContext, useState } from 'react';
-
-type ObjectWithStringArrayVal = { [key: string]: string[] };
-type ObjectMinMax = {
-  [key: string]: { min: number; max: number };
-};
+import {
+  Aggregates,
+  SearchJobRequestType,
+  SearchResultJobRecord,
+} from '../types/types';
 
 type SearchContextType = {
-  countriesAndLocationsObject: ObjectWithStringArrayVal;
-  workExperiencesObject: ObjectMinMax;
-  salaryObject: ObjectMinMax;
-  skillsList: string[];
-  workTypeList: string[];
-  preferencesList: string[];
-  industriesList: string[];
-  roles: string[];
-  jobs: any[];
-  setCountriesAndLocationsObject: React.Dispatch<
-    React.SetStateAction<ObjectWithStringArrayVal>
-  >;
-  setWorkExperiencesObject: React.Dispatch<React.SetStateAction<ObjectMinMax>>;
-  setSalaryObject: React.Dispatch<React.SetStateAction<ObjectMinMax>>;
-  setSkillsList: React.Dispatch<React.SetStateAction<string[]>>;
-  setWorkTypeList: React.Dispatch<React.SetStateAction<string[]>>;
-  setPreferencesList: React.Dispatch<React.SetStateAction<string[]>>;
-  setIndustriesList: React.Dispatch<React.SetStateAction<string[]>>;
-  setRoles: React.Dispatch<React.SetStateAction<string[]>>;
+  aggregates: Aggregates;
+  jobs: SearchResultJobRecord[];
+  size: number;
+  from: number;
+  totalJobs: number;
+  searchRequestBody: SearchJobRequestType;
+  setAggregates: React.Dispatch<React.SetStateAction<Aggregates>>;
   setJobs: React.Dispatch<React.SetStateAction<any[]>>;
+  setFrom: React.Dispatch<React.SetStateAction<number>>;
+  setTotalJobs: React.Dispatch<React.SetStateAction<number>>;
+  setSearchRequestBody: React.Dispatch<
+    React.SetStateAction<SearchJobRequestType>
+  >;
+  setSize: React.Dispatch<React.SetStateAction<number>>;
 };
 
 const defaultContext: SearchContextType = {
-  countriesAndLocationsObject: {},
-  workExperiencesObject: {},
-  salaryObject: {},
-  skillsList: [],
-  workTypeList: [],
-  preferencesList: [],
-  industriesList: [],
-  roles: [],
+  aggregates: {
+    countriesAndLocations: [],
+    preferences: [],
+    workTypes: [],
+    salaries: [],
+    workExperiences: [],
+    industries: [],
+    skills: [],
+  },
   jobs: [],
-  setCountriesAndLocationsObject: () => {},
-  setWorkExperiencesObject: () => {},
-  setSalaryObject: () => {},
-  setSkillsList: () => {},
-  setWorkTypeList: () => {},
-  setPreferencesList: () => {},
-  setIndustriesList: () => {},
-  setRoles: () => {},
+  size: 10,
+  from: 0,
+  totalJobs: 0,
+  searchRequestBody: {},
+  setAggregates: () => {},
   setJobs: () => {},
+  setFrom: () => {},
+  setTotalJobs: () => {},
+  setSearchRequestBody: () => {},
+  setSize: () => {},
 };
 
 const SearchContext = createContext<SearchContextType>(defaultContext);
 
 const SearchProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [countriesAndLocationsObject, setCountriesAndLocationsObject] =
-    useState<ObjectWithStringArrayVal>({});
-  const [workExperiencesObject, setWorkExperiencesObject] =
-    useState<ObjectMinMax>({});
-  const [salaryObject, setSalaryObject] = useState<ObjectMinMax>({});
-  const [skillsList, setSkillsList] = useState<string[]>([]);
-  const [workTypeList, setWorkTypeList] = useState<string[]>([]);
-  const [preferencesList, setPreferencesList] = useState<string[]>([]);
-  const [industriesList, setIndustriesList] = useState<string[]>([]);
-  const [roles, setRoles] = useState<string[]>([]);
-  const [jobs, setJobs] = useState<any[]>([]);
+  const [aggregates, setAggregates] = useState<Aggregates>(
+    defaultContext.aggregates
+  );
+  const [jobs, setJobs] = useState<SearchResultJobRecord[]>([]);
+  const [size, setSize] = useState<number>(1);
+  const [from, setFrom] = useState<number>(0);
+  const [totalJobs, setTotalJobs] = useState<number>(0);
+  const [searchRequestBody, setSearchRequestBody] =
+    useState<SearchJobRequestType>({});
 
   return (
     <SearchContext.Provider
       value={{
-        countriesAndLocationsObject,
-        workExperiencesObject,
-        salaryObject,
-        skillsList,
-        workTypeList,
-        preferencesList,
-        industriesList,
-        roles,
+        aggregates,
         jobs,
-        setCountriesAndLocationsObject,
-        setWorkExperiencesObject,
-        setSalaryObject,
-        setSkillsList,
-        setWorkTypeList,
-        setPreferencesList,
-        setIndustriesList,
-        setRoles,
+        size,
+        from,
+        totalJobs,
+        searchRequestBody,
+        setAggregates,
         setJobs,
+        setFrom,
+        setTotalJobs,
+        setSearchRequestBody,
+        setSize,
       }}
     >
       {children}
@@ -102,4 +90,4 @@ const useSearchContext = (): SearchContextType => {
 
 export { SearchContext, useSearchContext, SearchProvider };
 
-export type { SearchContextType, ObjectWithStringArrayVal, ObjectMinMax };
+export type { SearchContextType };
