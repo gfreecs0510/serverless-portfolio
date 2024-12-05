@@ -2,7 +2,7 @@ import { redisClient } from '../clients/redis.client';
 import { Response } from '../common/types.common';
 import { generateResponse } from '../common/response.common';
 
-const MAX_REQUESTS_PER_MINUTE = 20;
+const MAX_REQUESTS_PER_MINUTE = 30;
 const MAX_REQUESTS_PER_HOUR = 1000;
 const MAX_REQUESTS_PER_DAY = 1200;
 const DELAY_TIME = 26000;
