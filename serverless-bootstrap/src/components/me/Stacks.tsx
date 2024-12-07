@@ -13,26 +13,55 @@ import {
   SiExpress,
   SiGin,
   SiGo,
-  SiJavascript,
   SiLaravel,
   SiLooker,
   SiMariadb,
-  SiMongodb,
   SiMysql,
   SiNodedotjs,
   SiPython,
   SiServerless,
   SiTypescript,
+  SiJavascript,
+  SiReact,
+  SiReactbootstrap,
+  SiPhp,
+  SiBitbucket,
 } from 'react-icons/si';
 
-const mainStack = [
-  { name: 'AWS', icon: <SiAmazonwebservices color="#FF9900" /> },
-  { name: 'TypeScript', icon: <SiTypescript color="#3178C6" /> },
-  { name: 'JavaScript', icon: <SiJavascript color="#F7DF1E" /> },
+type StackAndLogos = {
+  name: string;
+  icon: any;
+};
+
+const frontEnd: StackAndLogos[] = [
+  { name: 'React', icon: <SiReact color="#FF9900" /> },
+  { name: 'React-Bootstrap', icon: <SiReactbootstrap color="#FF9900" /> },
+];
+
+const backEnd: StackAndLogos[] = [
   { name: 'Node.js', icon: <SiNodedotjs color="#339933" /> },
   { name: 'Express', icon: <SiExpress color="#000000" /> },
   { name: 'PHP Laravel', icon: <SiLaravel color="#FF2D20" /> },
+];
+
+const mainLanguages: StackAndLogos[] = [
+  { name: 'TypeScript', icon: <SiTypescript color="#3178C6" /> },
+  { name: 'JavaScript', icon: <SiJavascript color="#3178C6" /> },
+];
+
+const minorLanguages: StackAndLogos[] = [
+  { name: 'PHP', icon: <SiPhp color="#3776AB" /> },
   { name: 'Python', icon: <SiPython color="#3776AB" /> },
+  { name: 'Go', icon: <SiGo color="#00ADD8" /> },
+  { name: 'Gin', icon: <SiGin color="#00ADD8" /> },
+  { name: 'C', icon: <SiC color="#00599C" /> },
+  { name: 'C++', icon: <SiCplusplus color="#00599C" /> },
+  { name: 'C#', icon: <SiCsharp color="#239120" /> },
+];
+
+const others: StackAndLogos[] = [
+  { name: 'Bitbucket', icon: <SiBitbucket color="#FF9900" /> },
+  { name: 'AWS', icon: <SiAmazonwebservices color="#FF9900" /> },
   { name: 'Docker', icon: <SiDocker color="#2496ED" /> },
   { name: 'Looker', icon: <SiLooker color="#4053D6" /> },
   { name: 'DynamoDB', icon: <SiAmazondynamodb color="#4053D6" /> },
@@ -42,15 +71,29 @@ const mainStack = [
   { name: 'MySQL', icon: <SiMysql color="#4479A1" /> },
 ];
 
-const minorStack = [
-  { name: 'Go', icon: <SiGo color="#00ADD8" /> },
-  { name: 'Gin', icon: <SiGin color="#00ADD8" /> },
-  { name: 'C', icon: <SiC color="#00599C" /> },
-  { name: 'C++', icon: <SiCplusplus color="#00599C" /> },
-  { name: 'C#', icon: <SiCsharp color="#239120" /> },
-  { name: 'MongoDB', icon: <SiMongodb color="#47A248" /> },
-];
-
+function renderCards(title: string, stack: StackAndLogos[]) {
+  return (
+    <>
+      <Card.Title className="text-primary mb-4">{title}</Card.Title>
+      <Row className="mb-3">
+        {stack.map((tech, index) => (
+          <Col
+            xs={6}
+            sm={4}
+            md={3}
+            className="mb-3 d-flex align-items-center"
+            key={index}
+          >
+            <span style={{ fontSize: '1.5rem', marginRight: '8px' }}>
+              {tech.icon}
+            </span>
+            <span>{tech.name}</span>
+          </Col>
+        ))}
+      </Row>
+    </>
+  );
+}
 function Stacks() {
   return (
     <Container className="my-4">
@@ -58,40 +101,11 @@ function Stacks() {
         <Col md={8}>
           <Card className="shadow-sm p-3">
             <Card.Body>
-              <Card.Title className="text-primary mb-4">Main Stacks</Card.Title>
-              <Row className="mb-3">
-                {mainStack.map((tech, index) => (
-                  <Col
-                    xs={6}
-                    sm={4}
-                    md={3}
-                    className="mb-3 d-flex align-items-center"
-                    key={index}
-                  >
-                    <span style={{ fontSize: '1.5rem', marginRight: '8px' }}>
-                      {tech.icon}
-                    </span>
-                    <span>{tech.name}</span>
-                  </Col>
-                ))}
-              </Row>
-              <Card.Title className="text-secondary mt-4">Minor In</Card.Title>
-              <Row>
-                {minorStack.map((tech, index) => (
-                  <Col
-                    xs={6}
-                    sm={4}
-                    md={3}
-                    className="mb-3 d-flex align-items-center"
-                    key={index}
-                  >
-                    <span style={{ fontSize: '1.5rem', marginRight: '8px' }}>
-                      {tech.icon}
-                    </span>
-                    <span>{tech.name}</span>
-                  </Col>
-                ))}
-              </Row>
+              {renderCards('Frontend', frontEnd)}
+              {renderCards('Backend', backEnd)}
+              {renderCards('Main Programming Language', mainLanguages)}
+              {renderCards('Minor', minorLanguages)}
+              {renderCards('Cloud and other services', others)}
             </Card.Body>
           </Card>
         </Col>

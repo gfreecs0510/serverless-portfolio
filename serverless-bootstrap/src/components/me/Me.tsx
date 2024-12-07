@@ -4,6 +4,8 @@ import WorkExperience from './WorkExperience';
 import Education from './Education';
 import Stacks from './Stacks';
 import ProfilePicture from './ProfilePicture';
+import { Portfolio } from './Portfolio';
+import { CharacterReference } from './CharacterReference';
 
 function Me() {
   return (
@@ -14,6 +16,8 @@ function Me() {
       <Certifications />
       <WorkExperience />
       <Education />
+      <Portfolio />
+      <CharacterReference />
     </div>
   );
 }

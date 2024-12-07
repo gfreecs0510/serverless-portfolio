@@ -10,9 +10,21 @@ function AboutMe() {
           <h2 className="text-left">About Me</h2>
           <p>
             With 7.5 years of experience in software development and leadership,
-            I am actively seeking backend development opportunities in Japan and
-            internationally. I specialize in building AWS serverless
-            applications.
+            I am actively pursuing remote Full Stack/Backend developer roles.
+          </p>
+          <p>
+            Based in Tokyo, I bring expertise in building scalable and efficient
+            AWS serverless applications, complemented by in-depth knowledge of
+            Looker as both a developer and a user. I also hold an AWS
+            certification and possess extensive experience with various AWS
+            services.
+          </p>
+          <p>
+            I am recognized for my strong Japanese work ethic, adaptability, and
+            rapid problem-solving abilities, all underscored by a collaborative
+            mindset and a good sense of humor. As a proven leader and team
+            player, I excel at driving project success while fostering a
+            positive and productive environment.
           </p>
         </Col>
       </Row>

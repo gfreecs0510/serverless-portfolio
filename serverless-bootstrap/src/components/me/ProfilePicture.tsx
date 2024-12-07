@@ -4,6 +4,7 @@ import Col from 'react-bootstrap/Col';
 import Image from 'react-bootstrap/Image';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import GitHubIcon from '@mui/icons-material/GitHub';
+import Button from 'react-bootstrap/Button';
 
 function ProfilePicture() {
   const handleRedirect = (url: string) => {
@@ -15,14 +16,14 @@ function ProfilePicture() {
       <Row className="justify-content-center">
         <Col xs={12} md={6} lg={4}>
           <Image
-            src={`${import.meta.env.VITE_PUBLIC_URL}/al.jpg`}
+            src={'/al.jpg'}
             alt="Your Name"
             roundedCircle
             fluid
             style={{ width: '100%', maxWidth: '200px' }}
           />
           <h3 className="mt-3">Alejandro Lara</h3>
-          <p>Web developer</p>
+          <p>Full Stack/Backend developer</p>
           <p>Email: gfreecs0510@gmail.com</p>
           <div className="d-flex justify-content-center mt-3">
             <LinkedInIcon
@@ -45,6 +46,13 @@ function ProfilePicture() {
                 margin: '0 10px',
               }}
             />
+            <a
+              href="/resume.pdf"
+              download="Al Lara.pdf"
+              className="btn btn-primary"
+            >
+              Resume
+            </a>
           </div>
         </Col>
       </Row>
