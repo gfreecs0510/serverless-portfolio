@@ -4,7 +4,6 @@ import Col from 'react-bootstrap/Col';
 import Image from 'react-bootstrap/Image';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import GitHubIcon from '@mui/icons-material/GitHub';
-import Button from 'react-bootstrap/Button';
 
 function ProfilePicture() {
   const handleRedirect = (url: string) => {
